@@ -1,0 +1,45 @@
+<?php
+
+namespace Tests\Feature\Localiza;
+
+use App\Rentcar\Localiza\LocalizaAPI;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\TestCase;
+
+class LocalizaAPITest extends TestCase
+{
+    /**
+    * @group localiza
+    * @test
+    * */
+    public function when_client_error_get_abort_400_error(): void {
+        Http::fake([
+            '*' =>  Http::response('error', 400)
+        ]);
+
+        $this->expectException(HttpException::class);
+        // $this->expectErrorMessage(__('localiza.client_error'));
+
+        $localiza = new LocalizaAPI();
+        $localiza->callAPI("test","test");
+    }
+
+    /**
+    * @group localiza
+    * @test
+    * */
+    public function when_server_error_get_abort_500_error(): void {
+        Http::fake([
+            '*' =>  Http::response('error', 500)
+        ]);
+
+        $this->expectException(HttpException::class);
+        // $this->expectErrorMessage(__('localiza.server_error'));
+
+        $localiza = new LocalizaAPI();
+        $localiza->callAPI("test","test");
+    }
+}
