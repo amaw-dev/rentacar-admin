@@ -6,7 +6,7 @@
             </h2>
             <ReturnLink :action="route('reservations.index')" />
         </template>
-        <Form :form="form" method="get" :url="route('reservations.create')" />
+        <Form :form="form" method="post" :url="route('reservations.store')" />
     </AppLayout>
 </template>
 
