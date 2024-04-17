@@ -45,7 +45,7 @@ class ReservationController extends Controller
         try {
             DB::beginTransaction();
 
-            $reservation = Reservation::create($request->safe());
+            $reservation = Reservation::create($request->safe()->toArray());
 
             DB::commit();
 
@@ -53,7 +53,11 @@ class ReservationController extends Controller
             request()->session()->flash('flash.bannerStyle', 'success');
 
         } catch (\Throwable $th) {
+            Log::error("Error en guardar registro", [$th]);
             DB::rollBack();
+            request()->session()->flash('flash.banner',__('generic.error_generic'));
+            request()->session()->flash('flash.bannerStyle', 'error');
+            back();
         }
 
         return redirect()->route('reservations.index');
@@ -89,10 +93,11 @@ class ReservationController extends Controller
             request()->session()->flash('flash.banner',__('generic.successful_saved'));
             request()->session()->flash('flash.bannerStyle', 'success');
         } catch (\Throwable $th) {
-            Log::error('error al actualizar', [$th]);
+            Log::error('Error al actualizar registro', [$th]);
             DB::rollBack();
             request()->session()->flash('flash.banner',__('generic.error_generic'));
             request()->session()->flash('flash.bannerStyle', 'error');
+            back();
         }
 
         return redirect()->route('reservations.index');
@@ -114,9 +119,11 @@ class ReservationController extends Controller
             request()->session()->flash('flash.bannerStyle', 'success');
 
         } catch (\Throwable $th) {
+            Log::error('Error al borrar registro', [$th]);
             DB::rollBack();
             request()->session()->flash('flash.banner', __('generic.error_generic'));
             request()->session()->flash('flash.bannerStyle', 'error');
+            back();
         }
 
         return redirect()->route('reservations.index');
