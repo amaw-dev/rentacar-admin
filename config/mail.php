@@ -82,6 +82,40 @@ return [
             ],
         ],
 
+        /** rentacar mailers */
+        'alquilatucarro' => [
+            'transport' => 'smtp',
+            'host' => env('ALQUILATUCARRO_MAIL_HOST', 'sandbox.smtp.mailtrap.io'),
+            'port' => env('ALQUILATUCARRO_MAIL_PORT', 587),
+            'encryption' => env('ALQUILATUCARRO_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('ALQUILATUCARRO_MAIL_USERNAME'),
+            'password' => env('ALQUILATUCARRO_MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
+        ],
+
+        'alquilame' => [
+            'transport' => 'smtp',
+            'host' => env('ALQUILAME_MAIL_HOST', 'sandbox.smtp.mailtrap.io'),
+            'port' => env('ALQUILAME_MAIL_PORT', 587),
+            'encryption' => env('ALQUILAME_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('ALQUILAME_MAIL_USERNAME'),
+            'password' => env('ALQUILAME_MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
+        ],
+
+        'alquicarros' => [
+            'transport' => 'smtp',
+            'host' => env('ALQUICARROS_MAIL_HOST', 'sandbox.smtp.mailtrap.io'),
+            'port' => env('ALQUICARROS_MAIL_PORT', 587),
+            'encryption' => env('ALQUICARROS_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('ALQUICARROS_MAIL_USERNAME'),
+            'password' => env('ALQUICARROS_MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
+        ],
+
     ],
 
     /*
