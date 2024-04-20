@@ -31,7 +31,7 @@ class CategoryDataProviderResource extends JsonResource
             'name'      =>  $this->category->name,
             'category'  =>  $this->category->category,
             'description'   =>  $this->category->description,
-            'image'     =>  (App::environment('production')) ? Storage::url($this->category->image) : asset("storage/{$this->category->image}"),
+            'image'     =>  (App::environment('production')) ? asset($this->category->image) : asset("storage/{$this->category->image}"),
             'ad'    =>  $this->noCSSCode($this->category->ad),
             'models'    =>  new CategoryModelDataProviderCollection($this->category->models()->orderByDesc('default')->get()),
             'month_prices'  => new CategoryMonthPriceDataProviderCollection($this->category->monthPrices()->get())

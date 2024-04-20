@@ -18,7 +18,7 @@ class CategoryModelDataProviderResource extends JsonResource
     {
         return [
             'name'    =>  $this->name,
-            'image'     =>  (App::environment('production')) ? Storage::url($this->image) : asset("storage/carcategories/car.png"),
+            'image'     =>  (App::environment('production')) ? asset($this->image) : asset("storage/carcategories/car.png"),
             'description'   =>  $this->description,
             'default'   =>  ($this->default) ? true : false,
         ];
