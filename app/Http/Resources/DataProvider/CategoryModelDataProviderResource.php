@@ -5,6 +5,7 @@ namespace App\Http\Resources\DataProvider;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CategoryModelDataProviderResource extends JsonResource
 {
@@ -16,9 +17,13 @@ class CategoryModelDataProviderResource extends JsonResource
      */
     public function toArray($request)
     {
+        $cloudStorageProviderURI = Str::of(config('filesystems.disks.gcs.storage_api_uri'));
+        $imageProdURI = $cloudStorageProviderURI->append(asset($this->image));
+        $imageDevURI = asset("storage/carcategories/car.png");
+
         return [
             'name'    =>  $this->name,
-            'image'     =>  (App::environment('production')) ? asset($this->image) : asset("storage/carcategories/car.png"),
+            'image'     =>  (App::environment('production')) ? $imageProdURI : $imageDevURI,
             'description'   =>  $this->description,
             'default'   =>  ($this->default) ? true : false,
         ];
