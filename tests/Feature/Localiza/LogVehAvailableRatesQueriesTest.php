@@ -202,4 +202,25 @@ class LogVehAvailableRatesQueriesTest extends TestCase
         $response->assertJson(json_decode($logItem->processed_data, true));
     }
 
+    #[Group("log_veh_available_rates_queries")]
+    #[Group("localiza")]
+    #[Group("prunning")]
+    #[Test]
+    public function when_a_log_past_three_month_prune_it(): void {
+        LogVehAvailableRatesQuery::factory()->create([
+            'created_at'    => now()->subMonths(4)->format("Y-m-d")
+        ]);
+        $this->assertNotNull(LogVehAvailableRatesQuery::first());
+        $this->artisan('model:prune');
+        $this->assertNull(LogVehAvailableRatesQuery::first());
+
+        LogVehAvailableRatesQuery::factory()->create([
+            'created_at'    => now()->subMonths(2)->format("Y-m-d")
+        ]);
+        $this->assertNotNull(LogVehAvailableRatesQuery::first());
+        $this->artisan('model:prune');
+        $this->assertNotNull(LogVehAvailableRatesQuery::first());
+
+    }
+
 }
