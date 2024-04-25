@@ -113,11 +113,11 @@ class Reservation extends Model
         }
     }
 
-    private function hourFormat($hour, $format = "H:m"){
+    private function hourFormat($hour, $format = "H:i"){
         try {
-            return Carbon::createFromFormat($format, $hour)->format("H:m a");
+            return Carbon::createFromFormat($format, $hour)->format("H:i a");
         } catch (\Throwable $th) {
-            return Carbon::createFromFormat("H:m:s", $hour)->format("H:m a");
+            return Carbon::createFromFormat("H:i:s", $hour)->format("H:i a");
         }
     }
 
