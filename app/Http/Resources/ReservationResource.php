@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Rentcar\Whatsapp;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -45,6 +46,7 @@ class ReservationResource extends JsonResource
             'updated_at'  =>  $this->updated_at->format('Y-m-d H:m a'),
             'edit_url'      => route('reservations.edit', $this->id),
             'delete_url'      => route('reservations.destroy', $this->id),
+            'whatsapp_link' => Whatsapp::generateLink($this->phone)
         ];
     }
 }
