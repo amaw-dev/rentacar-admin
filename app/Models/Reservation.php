@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
+
 use App\Traits\ReservationFormatTrait;
 
 class Reservation extends Model
@@ -64,5 +69,34 @@ class Reservation extends Model
         'total_price' => 0,
         'total_price_localiza' => 0,
     ];
+
+    /**
+     * Get the name of the index associated with the model.
+     */
+    public function searchableAs(): string
+    {
+        return 'reservations_fulltext';
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    #[SearchUsingPrefix(['pickup_date', 'return_date', 'created_at'])]
+    #[SearchUsingFullText(['reservations_fulltext'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'fullname' => $this->fullname,
+            'identification' => $this->identification,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'reserve_code' => $this->reserve_code,
+            'pickup_date' => $this->pickup_date,
+            'return_date' => $this->return_date,
+            'created_at' => $this->created_at,
+        ];
+    }
 
 }
