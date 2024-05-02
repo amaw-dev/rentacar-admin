@@ -12,18 +12,28 @@ trait FormatTrait {
     }
 
     public function dateFormat($date, $format = "Y-m-d"){
-        try {
-            return Carbon::createFromFormat($format, $date)->locale('es')->isoFormat("LL");
-        } catch (\Throwable $th) {
-            return Carbon::createFromFormat($format, $date)->format('Y-m-d');
+        if($date instanceof Carbon){
+            return $date->locale('es')->isoFormat('LL');
+        }
+        else if(is_string($date)) {
+            try {
+                return Carbon::createFromFormat($format, $date)->locale('es')->isoFormat("LL");
+            } catch (\Throwable $th) {
+                return Carbon::createFromFormat($format, $date)->format('Y-m-d');
+            }
         }
     }
 
     public function hourFormat($hour, $format = "H:i"){
-        try {
-            return Carbon::createFromFormat($format, $hour)->format("H:i a");
-        } catch (\Throwable $th) {
-            return Carbon::createFromFormat("H:i:s", $hour)->format("H:i a");
+        if($hour instanceof Carbon){
+            return $hour->locale('es')->format('h:i a');
+        }
+        else if(is_string($hour)) {
+            try {
+                return Carbon::createFromFormat($format, $hour)->format("h:i a");
+            } catch (\Throwable $th) {
+                return Carbon::createFromFormat("H:i:s", $hour)->format("h:i a");
+            }
         }
     }
 }

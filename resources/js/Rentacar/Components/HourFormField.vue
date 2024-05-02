@@ -4,13 +4,15 @@
         <VueDatePicker
             v-model="form[field]"
             model-type="HH:mm"
-            format="HH:mm"
+            format="hh:mm a"
             inline
             auto-apply
+            :is24="false"
             locale="es"
             :clearable="false"
             time-picker
             :timezone="{ tz: 'America/New_York', offset: -5 }"
+            minutes-increment="30"
         />
         <InputError :message="form.errors[field]" class="mt-2" />
     </FormField>

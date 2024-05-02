@@ -96,4 +96,19 @@ class Reservation extends Model
         ];
     }
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'pickup_date' => 'date:Y-m-d',
+            'return_date' => 'date:Y-m-d',
+            'pickup_hour' => 'datetime:H:i:s',
+            'return_hour' => 'datetime:H:i:s',
+        ];
+    }
+
 }
