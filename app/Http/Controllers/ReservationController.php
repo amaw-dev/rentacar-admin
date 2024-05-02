@@ -20,8 +20,8 @@ class ReservationController extends Controller
     {
         $query = new Reservation;
 
-        if($request->filled('search'))
-            $query = $query->search($request->input('search'));
+        if($request->filled('s'))
+            $query = $query->search($request->input('s'));
 
 
         if($request->filled(['orderBy','orderByOrientation']))
@@ -30,12 +30,9 @@ class ReservationController extends Controller
                 $request->input('orderByOrientation')
             );
 
-        return inertia('Reservations/Index',
-            (new ReservationCollection(
-                $query
-                    ->get()
-                    ->all()))->resolve()
-        );
+        return inertia('Reservations/Index', [
+            'paginator' => new ReservationCollection($query->paginate()),
+        ]);
     }
 
     /**
@@ -72,14 +69,6 @@ class ReservationController extends Controller
         }
 
         return redirect()->route('reservations.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
     }
 
     /**
