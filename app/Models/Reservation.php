@@ -84,7 +84,6 @@ class Reservation extends Model
      *
      * @return array<string, mixed>
      */
-    #[SearchUsingPrefix(['pickup_date', 'return_date', 'created_at'])]
     #[SearchUsingFullText(['reservations_fulltext'])]
     public function toSearchableArray(): array
     {
@@ -94,9 +93,6 @@ class Reservation extends Model
             'phone' => $this->phone,
             'email' => $this->email,
             'reserve_code' => $this->reserve_code,
-            'pickup_date' => $this->pickup_date,
-            'return_date' => $this->return_date,
-            'created_at' => $this->created_at,
         ];
     }
 
