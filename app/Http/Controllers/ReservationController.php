@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rentcar\DataRepositories\ReservationDataRepository;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\ReservationCollection;
@@ -18,20 +19,10 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = new Reservation;
-
-        if($request->filled('s'))
-            $query = $query->search($request->input('s'));
-
-
-        if($request->filled(['orderBy','orderByOrientation']))
-            $query = $query->orderBy(
-                $request->input('orderBy'),
-                $request->input('orderByOrientation')
-            );
-
         return inertia('Reservations/Index', [
-            'paginator' => new ReservationCollection($query->paginate()),
+            'paginator' => new ReservationCollection(
+                (new ReservationDataRepository($request))->getPaginator()
+            ),
         ]);
     }
 
