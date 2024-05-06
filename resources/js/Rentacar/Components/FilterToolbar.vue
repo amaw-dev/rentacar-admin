@@ -18,7 +18,7 @@
                 class="p-2"
             ></JetInput>
 
-            <input v-if="s" type="hidden" name="s" :value="s" />
+            <input v-if="s" type="hidden" name="query" :value="s" />
 
             <JetButton
                 type="submit"
