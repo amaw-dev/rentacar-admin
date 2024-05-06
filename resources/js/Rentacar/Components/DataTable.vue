@@ -13,6 +13,8 @@
             <slot name="expand" v-bind="item"></slot>
         </template>
 
+        <template #empty-message> No hay datos que mostrar </template>
+
         <template #item-operation="item">
             <div class="operation-wrapper">
                 <div style="padding: 15px">
