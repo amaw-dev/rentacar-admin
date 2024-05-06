@@ -54,7 +54,7 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search
+                'query'    =>  $search
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
@@ -79,7 +79,7 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search
+                'query'    =>  $search
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
@@ -103,7 +103,7 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search
+                'query'    =>  $search
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
@@ -127,7 +127,7 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search
+                'query'    =>  $search
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
@@ -151,7 +151,7 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search
+                'query'    =>  $search
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
@@ -180,7 +180,13 @@ class ReservationTest extends TestCase
         $this
             ->actingAs($this->user)
             ->get(route('reservations.index', [
-                's'    =>  $search->format('Y-m-d')
+                'filterDateRanges'    =>  [
+                    'pickup_date' => [
+                        'start' => $search->subDays(2)->format('Y-m-d'),
+                        'end' => $search->addDays(2)->format('Y-m-d'),
+                    ]
+                ]
+
             ]))
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Reservations/Index')
