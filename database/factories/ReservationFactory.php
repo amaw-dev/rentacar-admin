@@ -46,7 +46,7 @@ class ReservationFactory extends Factory
             'franchise'             =>  Franchise::factory(),
             'user'                  =>  $this->faker->word,
             'reserve_code'          =>  (string) $this->faker->randomNumber(6, true),
-            'status'                =>  (ReservationStatus::Nueva)->value,
+            'status'                =>  ($this->faker->randomElement(ReservationStatus::class))->value,
             'created_at'            =>  $this->faker->dateTime()->format('Y-m-d H:i:s')
         ];
     }

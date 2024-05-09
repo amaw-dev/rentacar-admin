@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ReservationStatus;
 use App\Models\Branch;
 use App\Models\Reservation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,7 +47,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_fullname(){
+    public function filter_reservations_by_fullname(){
         $search = 'testing';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -71,7 +72,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_identification(){
+    public function filter_reservations_by_identification(){
         $search = 'testing';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -95,7 +96,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_phone(){
+    public function filter_reservations_by_phone(){
         $search = '+3155555555';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -119,7 +120,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_email(){
+    public function filter_reservations_by_email(){
         $search = 'test@test.com';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -143,7 +144,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_reserve_code(){
+    public function filter_reservations_by_reserve_code(){
         $search = '012345';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -168,7 +169,38 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_by_pickup_date(){
+    public function filter_reservations_by_status(){
+        $search = (ReservationStatus::SinConfirmar)->value;
+        Reservation::factory()->count(5)->create([
+            'status'    =>  (ReservationStatus::Nueva)->value
+        ]);
+        $reservation = Reservation::factory()->create([
+            'status'  => $search
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index', [
+                'filterCols'    =>  [
+                    'status'    =>  [
+                        'value' =>  $search
+                    ]
+                ]
+            ]))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',1)
+
+                ->has('paginator.data.items.0', fn(Assert $page) => $page
+                    ->where('status',$search)
+                    ->etc()
+                )
+        );
+    }
+
+    #[Group("reservation")]
+    #[Test]
+    public function filter_reservations_by_pickup_date(){
 
         Reservation::factory()->count(5)->create([
             'pickup_date'   => now()->subMonth()->format('Y-m-d')
@@ -201,7 +233,7 @@ class ReservationTest extends TestCase
     #[Group("reservation")]
     #[Group("bug")]
     #[Test]
-    public function search_reservations_by_pickup_date_and_query_get_error(){
+    public function filter_reservations_by_pickup_date_and_query_get_error(){
 
         Reservation::factory()->count(5)->create([
             'pickup_date'   => now()->subMonth()->format('Y-m-d')
@@ -236,7 +268,7 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function search_reservations_and_keep_filters_until_clean_filters(){
+    public function filter_reservations_and_keep_filters_until_clean_filters(){
         $search = 'testing';
         Reservation::factory()->count(5)->create();
         $reservation = Reservation::factory()->create([
@@ -265,6 +297,51 @@ class ReservationTest extends TestCase
                 ->has('paginator.data.items',1)
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
                     ->where('fullname',$search)
+                    ->etc()
+                )
+        );
+    }
+
+    #[Group("reservation")]
+    #[Test]
+    public function filter_reservations_by_search_and_pickup_date_and_status_fields(){
+        $status = (ReservationStatus::SinConfirmar)->value;
+        $name = 'testing';
+
+        Reservation::factory()->count(5)->create([
+            'status'    =>  (ReservationStatus::Nueva)->value,
+            'pickup_date'   => now()->subMonth()->format('Y-m-d'),
+        ]);
+        $reservation = Reservation::factory()->create([
+            'status'  => $status,
+            'pickup_date'  => now()->format('Y-m-d'),
+            'fullname'  =>  $name
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index', [
+                'filterCols'    =>  [
+                    'status'    =>  [
+                        'value' =>  $status
+                    ]
+                ],
+                'filterDateRanges'    =>  [
+                    'pickup_date' => [
+                        'start' => now()->subDays(2)->format('Y-m-d'),
+                        'end' => now()->addDays(2)->format('Y-m-d'),
+                    ]
+                ],
+                'query' =>  $name,
+            ]))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',1)
+
+                ->has('paginator.data.items.0', fn(Assert $page) => $page
+                    ->where('status',$status)
+                    ->where('fullname',$name)
+                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
                     ->etc()
                 )
         );
@@ -457,17 +534,17 @@ class ReservationTest extends TestCase
                 )
         );
 
+        // edit a reservation
+        $reservationData = $reservation->toArray();
+        $newIdentification = "1111111";
+        $reservationData['identification'] = $newIdentification;
+
         $this
             ->actingAs($this->user)
-            ->get(route('reservations.index'))
-            ->assertInertia(fn(Assert $page) => $page
-                ->component('Reservations/Index')
-                ->has('paginator.data.items',1)
-                ->has('paginator.data.items.0', fn(Assert $page) => $page
-                    ->where('fullname',$search)
-                    ->etc()
-                )
-        );
+            ->putJson(route('reservations.update',[
+                'reservation' => $reservation->id
+            ]), $reservationData)
+            ->assertStatus(302);
 
         $this
             ->actingAs($this->user)
@@ -477,6 +554,7 @@ class ReservationTest extends TestCase
                 ->has('paginator.data.items',1)
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
                     ->where('fullname',$search)
+                    ->where('identification',$newIdentification)
                     ->etc()
                 )
         );
