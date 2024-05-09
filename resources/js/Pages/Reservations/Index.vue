@@ -24,6 +24,11 @@
                             "
                         >
                             <template #custom-filters>
+                                <RentacarFilterEnumerable
+                                    field="status"
+                                    :options="reservationStatusOptions"
+                                    null-text="Seleccione un estado"
+                                />
                                 <RentacarFilterDateRange
                                     field="pickup_date"
                                     placeholder="Filtrar por día de recogida"
@@ -87,6 +92,7 @@ import Expand from "@/Pages/Reservations/Expand.vue";
 import CreateButton from "@/Rentacar/Components/Buttons/CreateButton.vue";
 import EditItemButton from "@/Rentacar/Components/Buttons/EditItemButton.vue";
 import RentacarFilterDateRange from "@/Rentacar/Components/Filters/FilterDateRange.vue";
+import RentacarFilterEnumerable from "@/Rentacar/Components/Filters/FilterEnumerable.vue";
 import RentacarFilterToolbar from "@/Rentacar/Components/FilterToolbar.vue";
 import RentacarList from "@/Rentacar/Components/List.vue";
 import RentacarSimplePaginator from "@/Rentacar/Components/SimplePaginator.vue";
@@ -95,9 +101,19 @@ import { filterData } from "@/Rentacar/Functions/table.js";
 
 import DataTable from "@/Rentacar/Components/DataTable.vue";
 
+import { computed } from "vue";
+import { usePage } from "@inertiajs/vue3";
+
 const props = defineProps({
     paginator: Object,
 });
+
+const reservationStatusOptions = computed(() =>
+    usePage().props.reservation_status.map((identificationType) => ({
+        value: identificationType.value,
+        text: identificationType.value,
+    }))
+);
 </script>
 
 <style lang="scss" scoped></style>

@@ -198,8 +198,15 @@ class DataRepository {
         else if($this->request->session()->has('filters.filterCols'))
             $filterCols = $this->request->session()->get('filters.filterCols');
 
-        foreach($filterCols as $field => $value){
-            $this->query = $this->query->where($field, 'like', "%{$value}%");
+        foreach($filterCols as $field => $filter){
+            $type = $filter['type'] ?? null;
+            $value = $filter['value'];
+
+            $this->query = match(true){
+                $type == 'like' => $this->query->where($field, 'like', "%{$value}%"),
+                default => $this->query->where($field,$value),
+            };
+
         }
     }
 
