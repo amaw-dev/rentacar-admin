@@ -1,5 +1,4 @@
 import "./bootstrap";
-import "flowbite";
 import "../css/app.css";
 
 import { createApp, h } from "vue";
