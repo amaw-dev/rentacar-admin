@@ -1,15 +1,9 @@
 <template>
-    <div
-        class="w-full max-w-md p-2.5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-    >
-        <div class="flex items-center justify-between mb-2">
-            <h5
-                class="text-base font-bold leading-none text-gray-900 dark:text-white"
-            >
+    <div class="card-compact w-full max-w-md p-2.5 shadow-xl border-2 bg-white">
+        <div class="card-body">
+            <h2 class="card-title">
                 <slot name="title"></slot>
-            </h5>
-        </div>
-        <div class="flow-root">
+            </h2>
             <slot></slot>
         </div>
     </div>
