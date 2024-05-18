@@ -233,7 +233,7 @@
         </template>
 
         <template #actions>
-            <div class="grid grid-cols-4 gap-4 place-content-between h-48">
+            <div class="grid grid-cols-2 gap-4 place-content-between h-48">
                 <div class="text-start" v-if="form.id">
                     <DeleteButton
                         :action="route('reservations.destroy', form.id)"
