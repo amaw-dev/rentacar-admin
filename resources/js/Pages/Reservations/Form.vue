@@ -55,13 +55,12 @@
                 />
             </FormField>
 
-            <FormField>Recogida</FormField>
             <FormField>
-                <div class="grid grid-cols-3 gap-2 ms-4">
+                <div class="grid grid-cols-3 gap-2">
                     <div class="flex flex-col">
                         <SelectFormField
                             field="pickup_location"
-                            name="Lugar"
+                            name="Lugar recogida"
                             :form="form"
                             :options="branchesOptions"
                         />
@@ -69,27 +68,26 @@
                     <div class="flex flex-col">
                         <DateFormField
                             field="pickup_date"
-                            name="Día"
+                            name="Día recogida"
                             :form="form"
                         />
                     </div>
                     <div class="flex flex-col">
                         <HourFormField
                             field="pickup_hour"
-                            name="Hora"
+                            name="Hora recogida"
                             :form="form"
                         />
                     </div>
                 </div>
             </FormField>
 
-            <FormField>Retorno</FormField>
             <FormField>
-                <div class="grid grid-cols-3 gap-2 ms-4">
+                <div class="grid grid-cols-3 gap-2">
                     <div class="flex flex-col">
                         <SelectFormField
                             field="return_location"
-                            name="Lugar"
+                            name="Lugar retorno"
                             :form="form"
                             :options="branchesOptions"
                         />
@@ -97,23 +95,22 @@
                     <div class="flex flex-col">
                         <DateFormField
                             field="return_date"
-                            name="Día"
+                            name="Día retorno"
                             :form="form"
                         />
                     </div>
                     <div class="flex flex-col">
                         <HourFormField
                             field="return_hour"
-                            name="Hora"
+                            name="Hora retorno"
                             :form="form"
                         />
                     </div>
                 </div>
             </FormField>
 
-            <FormField>Días y Horas</FormField>
             <FormField>
-                <div class="grid grid-cols-3 gap-2 ms-4">
+                <div class="grid grid-cols-3 gap-2">
                     <div class="flex flex-col">
                         <NumberInputFormField
                             field="selected_days"
@@ -140,7 +137,6 @@
                 </div>
             </FormField>
 
-            <FormField>Precios</FormField>
             <FormField>
                 <div
                     :class="{
