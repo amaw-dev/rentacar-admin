@@ -818,4 +818,76 @@ class ReservationTest extends TestCase
         $this->assertNull($reservation);
     }
 
+    #[Group("reservation")]
+    #[Group("bug")]
+    #[Test]
+    public function when_theres_category_null_reservations_list_not_show(){
+        Reservation::factory()->count(5)->create();
+        Reservation::factory()->create([
+            'category'  =>  null
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',6)
+        );
+    }
+
+    #[Group("reservation")]
+    #[Group("bug")]
+    #[Test]
+    public function when_theres_pickup_location_null_reservations_list_not_show(){
+        Reservation::factory()->count(5)->create();
+        Reservation::factory()->create([
+            'pickup_location'  =>  null
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',6)
+        );
+    }
+
+    #[Group("reservation")]
+    #[Group("bug")]
+    #[Test]
+    public function when_theres_return_location_null_reservations_list_not_show(){
+        Reservation::factory()->count(5)->create();
+        Reservation::factory()->create([
+            'return_location'  =>  null
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',6)
+        );
+    }
+
+    #[Group("reservation")]
+    #[Group("bug")]
+    #[Test]
+    public function when_theres_franchise_null_reservations_list_not_show(){
+        Reservation::factory()->count(5)->create();
+        Reservation::factory()->create([
+            'franchise'  =>  null
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'))
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',6)
+        );
+    }
+
 }

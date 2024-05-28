@@ -40,7 +40,7 @@ class ReservationResource extends JsonResource
             'total_price_localiza'  =>  $this->formattedTotalPriceLocaliza(),
             'user'  =>  $this->user,
             'reserve_code'  =>  $this->reserve_code,
-            'franchise'  =>  $this->franchiseObject->name,
+            'franchise'  =>  $this->franchiseObject->name ?? "",
             'status'  =>  $this->status,
             'created_at'  =>  $this->created_at->format('Y-m-d H:i a'),
             'updated_at'  =>  $this->updated_at->format('Y-m-d H:i a'),

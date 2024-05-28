@@ -9,7 +9,7 @@ trait ReservationFormatTrait {
     use FormatTrait;
 
     public function formattedCategory(){
-        return $this->categoryObject->category;
+        return $this->categoryObject->category ?? "";
     }
 
     public function formattedPickupPlace(){
@@ -60,7 +60,7 @@ trait ReservationFormatTrait {
         return $this->hourFormat($this->return_hour);
     }
 
-    private function formattedBranch(Branch $branch){
-        return "{$branch->name} - {$branch->code}";
+    private function formattedBranch(Branch|null $branch): string{
+        return ($branch) ? "{$branch->name} - {$branch->code}" : "";
     }
 }

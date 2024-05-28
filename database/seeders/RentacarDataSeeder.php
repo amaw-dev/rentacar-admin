@@ -1578,25 +1578,15 @@ class RentacarDataSeeder extends Seeder
                 'code'      =>  'ACBEX',
                 'name'      =>  'Bogotá Almacen Éxito del Country'
             ]);
+            $ACBNN = Branch::create([
+                'city_id'   =>  $bogota->id,
+                'code'      =>  'ACBNN',
+                'name'      =>  'Bogotá C.Cial Nuestro Centro'
+            ]);
             $ACBOJ = Branch::create([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBOJ',
                 'name'      =>  'Bogotá Almacen Yumbo Calle 170'
-            ]);
-            $ACBBN = Branch::create([
-                'city_id'   =>  $bogota->id,
-                'code'      =>  'ACBBN',
-                'name'      =>  'Bogotá C.Cial Bulevar Niza'
-            ]);
-            $ACBOF = Branch::create([
-                'city_id'   =>  $bogota->id,
-                'code'      =>  'ACBOF',
-                'name'      =>  'Bogotá C.Cial Outlet Factory'
-            ]);
-            $ACCHI = Branch::create([
-                'city_id'   =>  $chia->id,
-                'code'      =>  'ACCHI',
-                'name'      =>  'Chía C.Cial Bazzar'
             ]);
             $AABCR = Branch::create([
                 'city_id'   =>  $bucaramanga->id,
@@ -1622,11 +1612,6 @@ class RentacarDataSeeder extends Seeder
                 'city_id'   =>  $cali->id,
                 'code'      =>  'ACKJC',
                 'name'      =>  'Cali Norte Chipichape'
-            ]);
-            $ACKVL = Branch::create([
-                'city_id'   =>  $cali->id,
-                'code'      =>  'ACKVL',
-                'name'      =>  'Cali Sur Valle de Lili'
             ]);
             $ACKPA = Branch::create([
                 'city_id'   =>  $palmira->id,
@@ -1678,11 +1663,6 @@ class RentacarDataSeeder extends Seeder
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'ACMJM',
                 'name'      =>  'Rionegro'
-            ]);
-            $ACMPN = Branch::create([
-                'city_id'   =>  $medellin->id,
-                'code'      =>  'ACMPN',
-                'name'      =>  'Bello C.Cial Puerta del Norte'
             ]);
             $ACMAY = Branch::create([
                 'city_id'   =>  $sabaneta->id,
