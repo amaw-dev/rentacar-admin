@@ -1578,6 +1578,11 @@ class RentacarDataSeeder extends Seeder
                 'code'      =>  'ACBEX',
                 'name'      =>  'Bogotá Almacen Éxito del Country'
             ]);
+            $ACBNN = Branch::create([
+                'city_id'   =>  $bogota->id,
+                'code'      =>  'ACBNN',
+                'name'      =>  'Bogotá C.Cial Nuestro Centro'
+            ]);
             $ACBOJ = Branch::create([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBOJ',
