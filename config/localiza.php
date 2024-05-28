@@ -8,6 +8,8 @@ return [
     'requestorID'  =>  env('LOCALIZA_API_REQUESTOR_ID',"test"),
     'reservationEmailAddress' => env('LOCALIZA_RESERVATION_EMAIL_ADDRESS',"test"),
     'bccEmailAddress' => env('LOCALIZA_RESERVATION_BCC_EMAIL_ADDRESS',"test"),
-    'totalCoveragePriceLowGamma' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_LOW_GAMMA',42000),
-    'totalCoveragePriceHighGamma' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_HIGH_GAMMA',55000),
+    'basicCoveragePriceLowGamma' => env('LOCALIZA_BASIC_COVERAGE_PRICE_LOW_GAMMA',29000),
+    'basicCoveragePriceHighGamma' => env('LOCALIZA_BASIC_COVERAGE_PRICE_HIGH_GAMMA',49000),
+    'totalCoveragePriceLowGamma' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_LOW_GAMMA',61085),
+    'totalCoveragePriceHighGamma' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_HIGH_GAMMA',81086),
 ];
