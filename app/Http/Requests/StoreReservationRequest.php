@@ -42,6 +42,7 @@ class StoreReservationRequest extends FormRequest
             'tax_fee'   =>  ['required','numeric'],
             'iva_fee'   =>  ['required','numeric'],
             'total_price'   =>  ['required','numeric'],
+            'total_price_localiza'   =>  ['nullable','numeric'],
             'franchise' => ['required', 'exists:App\Models\Franchise,id'],
             'reserve_code'   =>  ['nullable',"string"],
             'user' => ['nullable', 'string'],
