@@ -43,11 +43,9 @@ class ReservationController extends Controller
     public function store(StoreReservationRequest $request)
     {
         try {
-            DB::beginTransaction();
 
             $reservation = Reservation::create($request->safe()->toArray());
 
-            DB::commit();
 
             request()->session()->flash('flash.banner', __('generic.successful_saved'));
             request()->session()->flash('flash.bannerStyle', 'success');
@@ -79,9 +77,7 @@ class ReservationController extends Controller
     public function update(UpdateReservationRequest $request, Reservation $reservation)
     {
         try {
-            DB::beginTransaction();
             $reservation->update($request->safe()->toArray());
-            DB::commit();
             request()->session()->flash('flash.banner',__('generic.successful_saved'));
             request()->session()->flash('flash.bannerStyle', 'success');
         } catch (\Throwable $th) {
@@ -101,11 +97,9 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         try {
-            DB::beginTransaction();
 
             $reservation->forceDelete();
 
-            DB::commit();
 
             request()->session()->flash('flash.banner', __('generic.successful_deleted'));
             request()->session()->flash('flash.bannerStyle', 'success');
