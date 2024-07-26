@@ -265,6 +265,7 @@ class LandingDataProviderTest extends TestCase
                     ->where('init_date', $car_month_prices[0]->init_date->format('d-m-Y'))
                     ->where('end_date', $car_month_prices[0]->end_date->format('d-m-Y'))
                     ->where('total_insurance_price', $car_month_prices[0]->total_insurance_price)
+                    ->where('one_day_price', $car_month_prices[0]->one_day_price)
                 )
                 ->has('categories.0.month_prices.1',fn($json) =>
                     $json
@@ -274,6 +275,7 @@ class LandingDataProviderTest extends TestCase
                     ->where('init_date', $car_month_prices[1]->init_date->format('d-m-Y'))
                     ->where('end_date', $car_month_prices[1]->end_date->format('d-m-Y'))
                     ->where('total_insurance_price', $car_month_prices[1]->total_insurance_price)
+                    ->where('one_day_price', $car_month_prices[1]->one_day_price)
                 )
                 ->etc()
         );
