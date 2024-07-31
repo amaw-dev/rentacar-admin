@@ -925,4 +925,39 @@ class ReservationTest extends TestCase
         $this->assertEquals($reservationData['monthly_mileage'], $reservation->monthly_mileage);
     }
 
+    #[Group("reservation")]
+    #[Group("total_insurance")]
+    #[Test]
+    public function create_a_reservation_with_total_insurance(){
+        $reservationData = Reservation::factory()->make()->toArray();
+        $reservationData['total_insurance'] = true;
+
+        $response = $this
+            ->actingAs($this->user)
+            ->postJson(route('reservations.store'), $reservationData);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservationData['fullname'], $reservation->fullname);
+        $this->assertTrue((bool) $reservation->total_insurance);
+    }
+
+    #[Group("reservation")]
+    #[Group("total_insurance")]
+    #[Test]
+    public function create_a_reservation_with_no_total_insurance(){
+        $reservationData = Reservation::factory()->make()->toArray();
+        $reservationData['total_insurance'] = false;
+
+        $response = $this
+            ->actingAs($this->user)
+            ->postJson(route('reservations.store'), $reservationData);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservationData['fullname'], $reservation->fullname);
+        $this->assertFalse((bool) $reservation->total_insurance);
+    }
+
+
 }

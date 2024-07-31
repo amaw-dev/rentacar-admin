@@ -48,6 +48,7 @@ class StoreReservationRequest extends FormRequest
             'user' => ['nullable', 'string'],
             'status' => ['required', 'string'],
             'monthly_mileage' => ['nullable', 'string'],
+            'total_insurance' => ['nullable', 'boolean'],
         ];
     }
 
@@ -85,6 +86,7 @@ class StoreReservationRequest extends FormRequest
             'user' => 'Referido',
             'status' => 'Estado',
             'monthly_mileage' => 'Kilometraje',
+            'total_insurance' => 'Seguro total',
         ];
     }
 }

@@ -40,6 +40,7 @@ class UpdateReservationRequest extends StoreReservationRequest
             'user' => ['nullable', 'string'],
             'status' => ['required', 'string'],
             'monthly_mileage' => ['nullable', 'string'],
+            'total_insurance' => ['nullable', 'boolean'],
         ];
     }
 }

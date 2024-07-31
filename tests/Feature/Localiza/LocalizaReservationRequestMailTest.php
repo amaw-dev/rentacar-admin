@@ -163,18 +163,19 @@ class LocalizaReservationRequestMailTest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function render_email_where_theres_total_insurance(): void {
-        $reservation = Reservation::factory()->create();
-        $total_insurance = true;
+        $reservation = Reservation::factory()->create([
+            'total_insurance' => true
+        ]);
 
-        $mail = new AlquilatucarroReservationRequest($reservation, $total_insurance);
+        $mail = new AlquilatucarroReservationRequest($reservation);
         $mail->assertSeeInHtml("El cliente requiere seguro total");
         $mail->assertSeeInText("El cliente requiere seguro total");
 
-        $mail = new AlquilameReservationRequest($reservation, $total_insurance);
+        $mail = new AlquilameReservationRequest($reservation);
         $mail->assertSeeInHtml("El cliente requiere seguro total");
         $mail->assertSeeInText("El cliente requiere seguro total");
 
-        $mail = new AlquicarrosReservationRequest($reservation, $total_insurance);
+        $mail = new AlquicarrosReservationRequest($reservation);
         $mail->assertSeeInHtml("El cliente requiere seguro total");
         $mail->assertSeeInText("El cliente requiere seguro total");
     }
@@ -183,18 +184,19 @@ class LocalizaReservationRequestMailTest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function render_email_where_theres_no_total_insurance(): void {
-        $reservation = Reservation::factory()->create();
-        $total_insurance = false;
+        $reservation = Reservation::factory()->create([
+            'total_insurance' => false
+        ]);
 
-        $mail = new AlquilatucarroReservationRequest($reservation, $total_insurance);
+        $mail = new AlquilatucarroReservationRequest($reservation);
         $mail->assertDontSeeInHtml("El cliente requiere seguro total");
         $mail->assertDontSeeInText("El cliente requiere seguro total");
 
-        $mail = new AlquilameReservationRequest($reservation, $total_insurance);
+        $mail = new AlquilameReservationRequest($reservation);
         $mail->assertDontSeeInHtml("El cliente requiere seguro total");
         $mail->assertDontSeeInText("El cliente requiere seguro total");
 
-        $mail = new AlquicarrosReservationRequest($reservation, $total_insurance);
+        $mail = new AlquicarrosReservationRequest($reservation);
         $mail->assertDontSeeInHtml("El cliente requiere seguro total");
         $mail->assertDontSeeInText("El cliente requiere seguro total");
     }

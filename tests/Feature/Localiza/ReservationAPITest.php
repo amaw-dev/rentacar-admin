@@ -190,6 +190,86 @@ class ReservationAPITest extends TestCase
 
     #[Group("reservation_api")]
     #[Group("localiza")]
+    #[Group("total_insurance")]
+    #[Test]
+    public function store_a_default_reservation_with_total_insurance()
+    {
+        Mail::fake();
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+        $reservationData['total_insurance'] = true;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertCreated();
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservation->pickup_location, $pickupLocation->id);
+        $this->assertEquals($reservation->return_location, $returnLocation->id);
+        $this->assertEquals($reservation->franchise, $franchise->id);
+        $this->assertTrue((boolean) $reservation->total_insurance);
+
+    }
+
+    #[Group("reservation_api")]
+    #[Group("localiza")]
+    #[Group("total_insurance")]
+    #[Test]
+    public function store_a_default_reservation_with_no_total_insurance()
+    {
+        Mail::fake();
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+        $reservationData['total_insurance'] = false;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertCreated();
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservation->pickup_location, $pickupLocation->id);
+        $this->assertEquals($reservation->return_location, $returnLocation->id);
+        $this->assertEquals($reservation->franchise, $franchise->id);
+        $this->assertFalse((boolean) $reservation->total_insurance);
+
+    }
+
+    #[Group("reservation_api")]
+    #[Group("localiza")]
     #[Test]
     public function send_a_mail_to_localiza_car_provider_when_record_a_reservation(): void {
         Mail::fake();
