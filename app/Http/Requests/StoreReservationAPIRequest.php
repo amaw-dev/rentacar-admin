@@ -49,6 +49,8 @@ class StoreReservationAPIRequest extends FormRequest
             'total_price'   =>  ['required','numeric'],
             'franchise' => ['required', 'exists:App\Models\Franchise,id'],
             'user' => ['nullable', 'string'],
+            'monthly_mileage' => ['nullable', 'string'],
+            'total_insurance' => ['nullable', 'boolean'],
 
         ];
     }

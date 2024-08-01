@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Franchise;
 use App\Enums\IdentificationType;
 use App\Enums\ReservationStatus;
+use App\Enums\MonthlyMileage;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,12 +46,42 @@ class HandleInertiaRequests extends Middleware
                 fn($type) => ['text' => $type->value, 'value' => $type->value],
                 IdentificationType::cases()
             ),
-            'reservation_status'  => fn() => array_map(
-                fn($type) => ['text' => $type->name, 'value' => $type->value],
-                ReservationStatus::cases()
+            'reservation_status' => fn() => [
+                [
+                    'text' => '1. Nueva',
+                    'value' => ReservationStatus::Nueva->value
+                ],
+                [
+                    'text' => '2. Con Código',
+                    'value' => ReservationStatus::ConCodigo->value,
+                ],
+                [
+                    'text' => '3. Sin Disponibilidad',
+                    'value' => ReservationStatus::SinDisponibilidad->value,
+                ],
+                [
+                    'text' => '4. Confirmado',
+                    'value' => ReservationStatus::Confirmado->value,
+                ],
+                [
+                    'text' => '5. Sin Confirmar',
+                    'value' => ReservationStatus::SinConfirmar->value,
+                ],
+                [
+                    'text' => '6. No Recogido',
+                    'value' => ReservationStatus::NoRecogido->value,
+                ],
+                [
+                    'text' => '7. Confirmado Pendiente Pago',
+                    'value' => ReservationStatus::ConfirmadoPendientePago->value,
+                ],
+            ],
+            'monthly_mileages'  => fn() => array_map(
+                fn($type) => ['text' => $type->value, 'value' => $type->value],
+                MonthlyMileage::cases()
             ),
             'categories'    =>  fn() => Category::all(),
-            'branches'    =>  fn() => Branch::all(),
+            'branches'    =>  fn() => Branch::orderBy('name','asc')->get()->all(),
             'franchises'    =>  fn() => Franchise::all(),
         ]);
     }

@@ -246,7 +246,9 @@ class VehAvail implements Arrayable {
      */
     private function getReturnFee(): array {
         $node = $this->node->xpath('.//A:Fees//A:Fee[@Description="Taxa de retorno"]');
-        $result = [];
+        $result = [
+            'returnFeeAmount' => 0
+        ];
 
         if(count($node) > 0){
             $node = $node[0];
@@ -264,8 +266,8 @@ class VehAvail implements Arrayable {
         ] = $this->getTotalCharge();
 
         [
-            'coverageTotalAmount' => $coverageTotalAmount
-        ] = $this->getCoverage();
+            'returnFeeAmount'   =>  $returnFeeAmount
+        ] = $this->getReturnFee();
 
         $result = [
             'totalAmountPlusTotalCoverage' => 0
@@ -273,7 +275,7 @@ class VehAvail implements Arrayable {
 
         if($totalAmount){
             $totalCoveragePrice = $this->getTotalCoveragePrice();
-            $result['totalAmountPlusTotalCoverage'] = (int) $totalAmount - $coverageTotalAmount + $totalCoveragePrice;
+            $result['totalAmountPlusTotalCoverage'] = (int) $totalAmount + $returnFeeAmount + $totalCoveragePrice;
         }
 
         return $result;

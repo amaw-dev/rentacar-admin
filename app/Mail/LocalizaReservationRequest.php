@@ -14,17 +14,15 @@ class LocalizaReservationRequest extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $reservation;
-    public $totalInsurance;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Reservation $reservation, bool $total_insurance = false)
+    public function __construct(Reservation $reservation)
     {
         $this->reservation = $reservation;
-        $this->totalInsurance = $total_insurance;
 
         $toEmail = $this->reservation->email; // client email
         $bccEmail = config("localiza.reservationEmailAddress"); // car provider email
@@ -43,7 +41,6 @@ class LocalizaReservationRequest extends Mailable implements ShouldQueue
     {
         return $this->markdown('mail.localiza-reservation-request', [
             'reserva' => $this->reservation,
-            'total_insurance' => $this->totalInsurance,
         ]);
     }
 }

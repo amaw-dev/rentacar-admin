@@ -27,8 +27,12 @@ Fecha: {{ $reserva->formattedPickupDate() }} {{ $reserva->formattedPickupHour() 
 Retorno: {{ $reserva->formattedReturnPlace() }} <br/>
 Fecha: {{ $reserva->formattedReturnDate() }} {{ $reserva->formattedReturnHour() }} <br/>
 
-@if ($total_insurance)
+@if ($reserva->total_insurance)
 El cliente requiere seguro total
+@endif
+
+@if ($reserva->monthly_mileage)
+El cliente ha seleccionado el kilometraje: {{ $reserva->monthly_mileage }}
 @endif
 
 ---

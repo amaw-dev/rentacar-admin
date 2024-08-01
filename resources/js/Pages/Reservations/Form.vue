@@ -193,7 +193,7 @@
             </FormField>
 
             <FormField>
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-3 gap-2">
                     <div class="flex flex-col">
                         <SelectFormField
                             field="franchise"
@@ -213,6 +213,26 @@
                         <InputFormField
                             field="user"
                             name="Referido"
+                            :form="form"
+                        />
+                    </div>
+                </div>
+            </FormField>
+
+            <FormField>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="flex flex-col">
+                        <SelectFormField
+                            field="monthly_mileage"
+                            name="Kilometraje"
+                            :form="form"
+                            :options="monthlyMileagesOptions"
+                        />
+                    </div>
+                    <div class="flex flex-col">
+                        <CheckboxInputFormField
+                            field="total_insurance"
+                            name="Seguro Total"
                             :form="form"
                         />
                     </div>
@@ -247,6 +267,7 @@
 <script setup>
 import InputFormField from "@/Rentacar/Components/FormFields/InputFormField.vue";
 import NumberInputFormField from "@/Rentacar/Components/FormFields/NumberInputFormField.vue";
+import CheckboxInputFormField from "@/Rentacar/Components/FormFields/CheckboxInputFormField.vue";
 import SelectFormField from "@/Rentacar/Components/FormFields/SelectFormField.vue";
 import DateFormField from "@/Rentacar/Components/FormFields/DateFormField.vue";
 import MoneyInputFormField from "@/Rentacar/Components/FormFields/MoneyInputFormField.vue";
@@ -298,7 +319,14 @@ const identificationTypesOptions = computed(() =>
 const reservationStatusOptions = computed(() =>
     usePage().props.reservation_status.map((identificationType) => ({
         value: identificationType.value,
-        text: identificationType.value,
+        text: identificationType.text,
+    }))
+);
+
+const monthlyMileagesOptions = computed(() =>
+    usePage().props.monthly_mileages.map((monthlyMileage) => ({
+        value: monthlyMileage.value,
+        text: monthlyMileage.value,
     }))
 );
 </script>

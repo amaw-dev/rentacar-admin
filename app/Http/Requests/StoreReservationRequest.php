@@ -22,7 +22,7 @@ class StoreReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fullname'  =>  ['required','min:5', 'max:50'],
+            'fullname'  =>  ['required','min:1', 'max:50'],
             'identification_type'   =>  ['required', 'string'],
             'identification'  =>  ['required','min:5', 'max:50'],
             'phone'  =>  ['required','min:5', 'max:50'],
@@ -42,10 +42,13 @@ class StoreReservationRequest extends FormRequest
             'tax_fee'   =>  ['required','numeric'],
             'iva_fee'   =>  ['required','numeric'],
             'total_price'   =>  ['required','numeric'],
+            'total_price_localiza'   =>  ['nullable','numeric'],
             'franchise' => ['required', 'exists:App\Models\Franchise,id'],
             'reserve_code'   =>  ['nullable',"string"],
             'user' => ['nullable', 'string'],
             'status' => ['required', 'string'],
+            'monthly_mileage' => ['nullable', 'string'],
+            'total_insurance' => ['nullable', 'boolean'],
         ];
     }
 
@@ -82,6 +85,8 @@ class StoreReservationRequest extends FormRequest
             'reserve_code' => 'Código reserva',
             'user' => 'Referido',
             'status' => 'Estado',
+            'monthly_mileage' => 'Kilometraje',
+            'total_insurance' => 'Seguro total',
         ];
     }
 }

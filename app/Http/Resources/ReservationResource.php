@@ -40,6 +40,8 @@ class ReservationResource extends JsonResource
             'total_price_localiza'  =>  $this->formattedTotalPriceLocaliza(),
             'user'  =>  $this->user,
             'reserve_code'  =>  $this->reserve_code,
+            'monthly_mileage'  =>  $this->monthly_mileage,
+            'total_insurance'  => (bool)  $this->total_insurance,
             'franchise'  =>  $this->franchiseObject->name ?? "",
             'status'  =>  $this->status,
             'created_at'  =>  $this->created_at->format('Y-m-d H:i a'),

@@ -12,9 +12,9 @@ class AlquicarrosReservationRequest extends LocalizaReservationRequest
      *
      * @return void
      */
-    public function __construct(Reservation $reservation, bool $total_insurance = false)
+    public function __construct(Reservation $reservation)
     {
-        parent::__construct($reservation, $total_insurance);
+        parent::__construct($reservation);
         $email = config('mail.mailers.alquicarros.username');
         $this->from($email, "Alquicarros");
 
@@ -29,7 +29,6 @@ class AlquicarrosReservationRequest extends LocalizaReservationRequest
     {
         return $this->markdown('mail.alquicarros-reservation-request', [
             'reserva' => $this->reservation,
-            'total_insurance' => $this->totalInsurance,
         ]);
     }
 }

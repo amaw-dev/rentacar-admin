@@ -61,6 +61,14 @@ class ReservationCollection extends RentacarResourceCollection
                     "value"     =>  "status",
                 ],
                 [
+                    "text"      =>  "TOTAL",
+                    "value"     =>  "total_price",
+                ],
+                [
+                    "text"      =>  "T LOCALIZA",
+                    "value"     =>  "total_price_localiza",
+                ],
+                [
                     "text"  =>  "OPERACIONES",
                     "value" =>  "operation"
                 ]

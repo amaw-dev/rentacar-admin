@@ -45,10 +45,9 @@ class ReservationAPIController extends Controller
                 try {
                     // send to localiza a notification
                     $franchiseEmail = $this->franchisesEmails[$franchise];
-                    $total_insurance = $request->boolean('total_insurance', false);
 
                     Mail::mailer($franchise)
-                    ->send(new $franchiseEmail($reservation, $total_insurance));
+                    ->send(new $franchiseEmail($reservation));
                 } catch (\Throwable $th) {
                     Log::error($th->getMessage());
                     abort(500, __('localiza.error_sending_reservation_request_to_localiza'));

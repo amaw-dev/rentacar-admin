@@ -5,13 +5,15 @@
             v-text="label"
         ></p>
     </div>
-    <div
-        class="text-xs inline-flex items-center text-gray-900"
-        v-text="value"
-    ></div>
+    <div class="text-xs inline-flex items-end">
+        <VueFeather v-if="value" type="check-square" size="14" />
+        <VueFeather v-else type="square" size="14" />
+    </div>
 </template>
 
 <script setup>
+import VueFeather from "vue-feather";
+
 const props = defineProps({
     label: {
         required: true,
@@ -19,7 +21,7 @@ const props = defineProps({
     },
     value: {
         required: false,
-        type: [String, Number],
+        type: [Number, Boolean],
     },
 });
 </script>
