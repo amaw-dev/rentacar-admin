@@ -80,10 +80,21 @@
                                     v-text="email"
                                 ></a>
                             </template>
-                            <template #item-operation="{ edit_url }">
+                            <template
+                                #item-operation="{
+                                    edit_url,
+                                    email_preview_url,
+                                }"
+                            >
                                 <div class="operation-wrapper">
-                                    <div style="padding: 15px">
+                                    <div
+                                        style="padding: 15px"
+                                        class="flex flex-row gap-2"
+                                    >
                                         <EditItemButton :action="edit_url" />
+                                        <PreviewClientMailButton
+                                            :action="email_preview_url"
+                                        />
                                     </div>
                                 </div>
                             </template>
@@ -100,6 +111,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Expand from "@/Pages/Reservations/Expand.vue";
 import CreateButton from "@/Rentacar/Components/Buttons/CreateButton.vue";
 import EditItemButton from "@/Rentacar/Components/Buttons/EditItemButton.vue";
+import PreviewClientMailButton from "@/Rentacar/Components/Buttons/PreviewClientMailButton.vue";
 import RentacarFilterDateRange from "@/Rentacar/Components/Filters/FilterDateRange.vue";
 import RentacarFilterEnumerable from "@/Rentacar/Components/Filters/FilterEnumerable.vue";
 import RentacarFilterToolbar from "@/Rentacar/Components/FilterToolbar.vue";
@@ -131,5 +143,3 @@ const franchisesOptions = computed(() =>
     }))
 );
 </script>
-
-<style lang="scss" scoped></style>
