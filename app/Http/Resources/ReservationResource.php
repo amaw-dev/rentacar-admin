@@ -46,6 +46,7 @@ class ReservationResource extends JsonResource
             'status'  =>  $this->status,
             'created_at'  =>  $this->created_at->format('Y-m-d H:i a'),
             'updated_at'  =>  $this->updated_at->format('Y-m-d H:i a'),
+            'email_preview_url'      => route('reservations.emailPreview', $this->id),
             'edit_url'      => route('reservations.edit', $this->id),
             'delete_url'      => route('reservations.destroy', $this->id),
             'whatsapp_link' => Whatsapp::generateLink($this->phone)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReservationEmailPreviewController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,8 +24,12 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('reservations/cleanFilters', [ReservationController::class,'cleanFilters'])->name('reservations.cleanFilters');
-    Route::resource('reservations', ReservationController::class);
+    Route::get('/reservations/cleanFilters', [ReservationController::class,'cleanFilters'])->name('reservations.cleanFilters');
+    Route::get('/reservations/preview/{reservation}', ReservationEmailPreviewController::class)->name('reservations.emailPreview');
+    Route::resource('/reservations', ReservationController::class);
+    // Route::prefix('/reservations')->group( function() {
+
+    // });
 
     // Route::get('/dashboard', function () {
     //     return Inertia::render('Dashboard');
