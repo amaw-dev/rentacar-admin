@@ -25,6 +25,13 @@ class ReservationEmailPreviewResource extends JsonResource
         $category = Str::after($this->categoryObject->category, $this->categoryObject->name);
         $description = Str::words($this->categoryObject->description, 3, '');
 
+        $includedFees = match(true){
+            $this->selected_days == 30 && $this->total_insurance => "Kilometraje: {$this->monthly_mileage}, Seguro total",
+            $this->selected_days == 30 && !$this->total_insurance => "Kilometraje: {$this->monthly_mileage}, Seguro básico",
+            $this->selected_days < 30 && $this->total_insurance => "Kilometraje ilimitado, Seguro total",
+            $this->selected_days < 30 && !$this->total_insurance => "Kilometraje ilimitado, Seguro básico",
+        };
+
         return [
             'fullname' => $this->fullname,
             'identification_type' => $this->formattedShortIdentificationType(),
@@ -34,11 +41,24 @@ class ReservationEmailPreviewResource extends JsonResource
             'category_category' => $category,
             'category_description' => $description,
             'category_image' => (App::environment('production')) ? $imageProdURI : $imageDevURI,
+            'selected_days'  =>  $this->selected_days,
             'pickup_branch'  =>  $this->pickupLocation->name,
             'pickup_city'  =>  $this->formattedPickupCity(),
             'pickup_date'  =>  $this->formattedPickupDate(),
             'pickup_hour'  =>  $this->formattedPickupHour(),
+            'return_branch'  =>  $this->returnLocation->name,
+            'return_city'  =>  $this->formattedReturnCity(),
+            'return_date'  =>  $this->formattedReturnDate(),
+            'return_hour'  =>  $this->formattedReturnHour(),
+            'extra_hours'  =>  $this->extra_hours,
+            'extra_hours_price' => $this->formattedExtraHoursPrice(),
+            'coverage_price' => $this->formattedCoveragePrice(),
 
+            'tax_fee' => $this->formattedTaxFee(),
+            'iva_fee' => $this->formattedIVAFee(),
+            'subtotal_fee' => $this->formattedSubtotalPrice(),
+            'total_fee' => $this->formattedTotalPrice(),
+            'included_fees'  =>  $includedFees,
         ];
     }
 }

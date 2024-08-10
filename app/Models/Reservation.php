@@ -55,6 +55,15 @@ class Reservation extends Model
     }
 
     /**
+     * get subtotal of this instance
+     *
+     * @return number
+     */
+    public function getSubtotalPrice(){
+        return $this->total_price - $this->tax_fee - $this->iva_fee;
+    }
+
+    /**
      * The model's default values for attributes.
      *
      * @var array
