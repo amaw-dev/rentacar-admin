@@ -53,7 +53,7 @@ class ReservationEmailPreviewResource extends JsonResource
             'extra_hours'  =>  $this->extra_hours,
             'extra_hours_price' => $this->formattedExtraHoursPrice(),
             'coverage_price' => $this->formattedCoveragePrice(),
-
+            'return_fee' => ($this->return_fee > 0) ? $this->formattedReturnFee() : 0,
             'tax_fee' => $this->formattedTaxFee(),
             'iva_fee' => $this->formattedIVAFee(),
             'subtotal_fee' => $this->formattedSubtotalPrice(),

@@ -34,6 +34,7 @@ class ReservationResource extends JsonResource
             'extra_hours_price'  =>  $this->formattedExtraHoursPrice(),
             'coverage_days'  =>  $this->coverage_days,
             'coverage_price'  =>  $this->formattedCoveragePrice(),
+            'return_fee'  =>  $this->formattedReturnFee(),
             'tax_fee'  =>  $this->formattedTaxFee(),
             'iva_fee'  =>  $this->formattedIVAFee(),
             'total_price'  =>  $this->formattedTotalPrice(),

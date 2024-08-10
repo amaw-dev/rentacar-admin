@@ -57,6 +57,12 @@ trait ReservationFormatTrait {
     }
 
     public function formattedIVAFee(): string {
+        return $this->moneyFormat($this->iva_fee);
+    }
+
+    public function formattedReturnFee(): string {
+        return $this->moneyFormat($this->return_fee);
+    }
 
     public function formattedSubtotalPrice(): string {
         return $this->moneyFormat($this->getSubtotalPrice());
