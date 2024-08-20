@@ -83,6 +83,7 @@ class PreviewClientMailTest extends TestCase
             'tax_fee'   => 1000,
             'iva_fee'   => 1000,
             'total_price'   => 10000,
+            'total_price_localiza'   => 10000,
         ]);
 
         $response = $this
@@ -110,13 +111,17 @@ class PreviewClientMailTest extends TestCase
                 ->where('return_date', $return_date_output)
                 ->where('return_hour', '09:00 am')
                 ->where('extra_hours', 0)
-                ->where('extra_hours_price', $reservation->formattedExtraHoursPrice())
-                ->where('coverage_price', $reservation->formattedCoveragePrice())
+                ->where('extra_hours_price', $reservation->formatted_extra_hours_price)
+                ->where('coverage_price', $reservation->formatted_coverage_price)
                 ->where('return_fee', 0)
-                ->where('tax_fee', $reservation->formattedTaxFee())
-                ->where('iva_fee', $reservation->formattedIVAFee())
-                ->where('subtotal_fee', $reservation->formattedSubtotalPrice())
-                ->where('total_fee', $reservation->formattedTotalPrice())
+                ->where('tax_fee', $reservation->formatted_tax_fee_from_localiza_price)
+                ->where('iva_fee', $reservation->formatted_iva_fee_from_localiza_price)
+                ->where('subtotal_fee', $reservation->formatted_subtotal_from_localiza_price)
+                ->where('total_fee', $reservation->formatted_total_price_localiza)
+                ->where('base_fee', $reservation->formatted_base_price_from_localiza_price)
+                ->where('daily_base_fee', $reservation->formatted_original_vehicle_unit_price)
+                ->where('discount_percentage', $reservation->formatted_discount_percentage_from_localiza_price)
+                ->where('discount_amount', $reservation->formatted_daily_base_price_from_localiza_price)
                 ->etc()
             )
         );

@@ -10,10 +10,11 @@ use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
 
 use App\Traits\ReservationFormatTrait;
+use App\Traits\ReservationEmailPreviewTrait;
 
 class Reservation extends Model
 {
-    use HasFactory, Searchable, ReservationFormatTrait;
+    use HasFactory, Searchable, ReservationFormatTrait, ReservationEmailPreviewTrait;
 
     protected $guarded = [];
     protected $with = ['categoryObject','pickupLocation','returnLocation','franchiseObject'];
