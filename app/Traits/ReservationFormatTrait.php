@@ -83,12 +83,6 @@ trait ReservationFormatTrait {
         );
     }
 
-    public function formattedSubtotalPrice(): Attribute {
-        return Attribute::make(
-            get: fn () => $this->moneyFormat($this->getSubtotalPrice())
-        );
-    }
-
     public function formattedTotalPrice(): Attribute {
         return Attribute::make(
             get: fn () => $this->moneyFormat($this->total_price)
