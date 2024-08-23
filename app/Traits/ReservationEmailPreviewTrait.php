@@ -149,7 +149,7 @@ trait ReservationEmailPreviewTrait {
     }
 
     private function getDiscountFromAmounts(int $initialAmount, int $finalAmount): float {
-        return round((($finalAmount - $initialAmount) / $finalAmount) * 100, 2);
+        return round((($finalAmount - $initialAmount) / $finalAmount) * 100, 1);
     }
 
 
