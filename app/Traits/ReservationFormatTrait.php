@@ -89,6 +89,12 @@ trait ReservationFormatTrait {
         );
     }
 
+    public function formattedTotalPriceToPay(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->moneyFormat($this->total_price_to_pay)
+        );
+    }
+
     public function formattedTotalPriceLocaliza(): Attribute {
         return Attribute::make(
             get: fn () => $this->moneyFormat($this->total_price_localiza)
