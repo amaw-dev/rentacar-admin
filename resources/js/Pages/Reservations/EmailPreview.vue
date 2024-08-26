@@ -129,10 +129,18 @@
             <!-- DETALLES DE TARIFAS -->
             <div class="fila" style="margin-bottom: 1%">
               <p class="pequeña columna">
-                Tarifa con Dto ({{ reservation.discount_percentage }}:):
+                Diaria con Dto ({{ reservation.discount_percentage }}:):
               </p>
               <p class="pequeña text-right columna">
                 {{ reservation.daily_base_fee }}
+              </p>
+            </div>
+            <div class="fila" style="margin-bottom: 1%">
+              <p class="pequeña columna">
+                Tarifa por ({{ reservation.selected_days }}) días:
+              </p>
+              <p class="pequeña text-right columna">
+                {{ reservation.base_fee }}
               </p>
             </div>
             <div v-if="reservation.extra_hours" class="fila" style="margin-bottom: 1%">
@@ -148,15 +156,13 @@
               </p>
             </div>
             <div class="fila" style="margin-bottom: 1%">
-              <p class="pequeña columna">
-                Total por ({{ reservation.selected_days }}) días:
-              </p>
+              <p class="pequeña columna">Subtotal:</p>
               <p class="pequeña text-right columna">
                 {{ reservation.subtotal_fee }}
               </p>
             </div>
             <div class="fila" style="margin-bottom: 1%">
-              <p class="pequeña columna">Tasa Administrativa:</p>
+              <p class="pequeña columna">Tasa Admin (10%):</p>
               <p class="pequeña text-right columna">
                 {{ reservation.tax_fee }}
               </p>
