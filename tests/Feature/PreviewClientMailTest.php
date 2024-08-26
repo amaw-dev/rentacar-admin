@@ -119,7 +119,7 @@ class PreviewClientMailTest extends TestCase
                 ->where('tax_fee', $reservation->formatted_tax_fee_from_localiza_price)
                 ->where('iva_fee', $reservation->formatted_iva_fee_from_localiza_price)
                 ->where('subtotal_fee', $reservation->formatted_subtotal_from_localiza_price)
-                ->where('total_fee', $reservation->formatted_total_price_localiza)
+                ->where('total_fee', $reservation->formatted_total_price_to_pay)
                 ->where('base_fee', $reservation->formatted_base_price_from_localiza_price)
                 ->where('daily_base_fee', $reservation->formatted_original_vehicle_unit_price)
                 ->where('discount_percentage', $reservation->formatted_discount_percentage_from_localiza_price)
