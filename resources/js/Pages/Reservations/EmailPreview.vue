@@ -170,7 +170,7 @@
               </p>
             </div>
             <div class="fila" style="margin-bottom: 1%">
-              <p class="pequeña columna">+ Impuesto 19%:</p>
+              <p class="pequeña columna">+ Impuesto IVA (19%):</p>
               <p class="pequeña text-right columna">
                 {{ reservation.iva_fee }}
               </p>
