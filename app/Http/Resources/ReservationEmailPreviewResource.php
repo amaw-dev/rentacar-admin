@@ -54,7 +54,7 @@ class ReservationEmailPreviewResource extends JsonResource
             'subtotal_fee' => $this->formatted_subtotal_from_localiza_price,
             'total_fee' => $this->formatted_total_price_to_pay,
             'base_fee' => $this->formatted_base_price_from_localiza_price,
-            'daily_base_fee' => $this->formatted_original_vehicle_unit_price,
+            'daily_base_fee' => $this->formatted_daily_base_price_from_localiza_price,
             'discount_percentage' => $this->formatted_discount_percentage_from_localiza_price,
             'discount_amount' => $this->formatted_daily_base_price_from_localiza_price,
             'included_fees'  =>  $this->formatted_included_fees,

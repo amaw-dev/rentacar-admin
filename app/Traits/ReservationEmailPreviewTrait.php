@@ -33,10 +33,12 @@ trait ReservationEmailPreviewTrait {
 
     public function ivaFeeFromLocalizaPrice(): Attribute {
         $totalPrice = $this->total_price_to_pay;
-        $ivaPercentaje = config('localiza.ivaPercentage');
+        $ivaPercentage = config('localiza.ivaPercentage');
+        $totalPriceMinusIvaAmount = round($totalPrice / (1 + ($ivaPercentage / 100)));
+        $ivaAmount = $totalPrice - $totalPriceMinusIvaAmount;
 
         return Attribute::make(
-            get: fn () => ($totalPrice) ? $this->applyPercentageToAmount($totalPrice, $ivaPercentaje) : null,
+            get: fn () => ($totalPrice) ? $ivaAmount : null,
         );
     }
 
@@ -49,10 +51,11 @@ trait ReservationEmailPreviewTrait {
     public function taxFeeFromLocalizaPrice(): Attribute {
         $totalPrice = $this->total_price_to_pay;
         $ivaFee = $this->iva_fee_from_localiza_price;
-        $taxFeePercentaje = config('localiza.taxFeePercentage');
+        $totalPriceMinusTaxFee = ($totalPrice - $ivaFee) / 11;
+        $taxFeeAmount = $totalPriceMinusTaxFee;
 
         return Attribute::make(
-            get: fn () => ($totalPrice && $ivaFee) ? $this->applyPercentageToAmount($totalPrice - $ivaFee, $taxFeePercentaje) : null,
+            get: fn () => ($totalPrice && $ivaFee) ? $taxFeeAmount : null,
         );
     }
 
@@ -99,7 +102,7 @@ trait ReservationEmailPreviewTrait {
         $selectedDays = $this->selected_days;
 
         return Attribute::make(
-            get: fn () => ($basePrice && $selectedDays) ? round($basePrice / $selectedDays) : null,
+            get: fn () => ($basePrice && $selectedDays) ? round($basePrice / $selectedDays, 1) : null,
         );
     }
 
@@ -145,11 +148,11 @@ trait ReservationEmailPreviewTrait {
     }
 
     private function applyPercentageToAmount(int $amount, int $percentage) : int {
-        return round(($amount * $percentage) / 100);
+        return round($amount * ($percentage / 100), 1);
     }
 
     private function getDiscountFromAmounts(int $initialAmount, int $finalAmount): float {
-        return round((($finalAmount - $initialAmount) / $finalAmount) * 100, 1);
+        return round((($finalAmount - $initialAmount) / $finalAmount) * 100, 1, 1);
     }
 
 
