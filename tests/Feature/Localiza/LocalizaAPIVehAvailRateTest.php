@@ -66,10 +66,10 @@ class LocalizaAPIVehAvailRateTest extends TestCase
             'extraHoursUnityAmount' =>  0,
             'extraHoursTotalAmount' =>  0,
             'totalCoverageUnitCharge' => 61_085,
-            'totalAmountPlusTotalCoverage' => 265_087,
-            'taxFeeWithTotalCoverage'   => 26_509,
-            'ivaFeeWithTotalCoverage'   => 55_403,
-            'totalPriceWithTotalCoverage' => 346_999,
+            'totalAmountPlusTotalCoverage' => 236_087,
+            'taxFeeWithTotalCoverage'   => 23_609,
+            'ivaFeeWithTotalCoverage'   => 49_342,
+            'totalPriceWithTotalCoverage' => 309_038,
         ],$data);
     }
 
@@ -119,10 +119,10 @@ class LocalizaAPIVehAvailRateTest extends TestCase
             'extraHoursUnityAmount' =>  0,
             'extraHoursTotalAmount' =>  0,
             'totalCoverageUnitCharge' => 61_085,
-            'totalAmountPlusTotalCoverage' => 255_920,
-            'taxFeeWithTotalCoverage'   => 25_592,
-            'ivaFeeWithTotalCoverage'   => 53_487,
-            'totalPriceWithTotalCoverage' => 334_999,
+            'totalAmountPlusTotalCoverage' => 226_920,
+            'taxFeeWithTotalCoverage'   => 22_692,
+            'ivaFeeWithTotalCoverage'   => 47_426,
+            'totalPriceWithTotalCoverage' => 297_038,
         ],$data);
     }
 
