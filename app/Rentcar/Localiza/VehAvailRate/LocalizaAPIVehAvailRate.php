@@ -3,7 +3,8 @@
 namespace App\Rentcar\Localiza\VehAvailRate;
 
 use App\Jobs\LogVehAvailableRatesQueryJob;
-use App\Rentcar\Localiza\Exceptions\NoPriceFoundException;
+use App\Rentcar\Localiza\Contracts\LocalizaAPIRequest;
+use App\Rentcar\Localiza\Exceptions\VehAvailRate\NoPriceFoundException;
 use App\Rentcar\Localiza\Exceptions\TimeoutException;
 use App\Rentcar\Localiza\VehAvailRate\VehAvail;
 use App\Rentcar\Localiza\LocalizaAPI;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use SimpleXMLElement;
 
-class LocalizaAPIVehAvailRate extends LocalizaAPI {
+class LocalizaAPIVehAvailRate extends LocalizaAPI implements LocalizaAPIRequest {
 
     private $pickupLocation;
     private $returnLocation;
@@ -42,7 +43,7 @@ class LocalizaAPIVehAvailRate extends LocalizaAPI {
         ];
     }
 
-    public function getData(){
+    public function getData() : array {
         try {
             $filledVehicleAvailableRateXML = $this->getFilledInputXML();
             $response = $this->callAPI($this->soapAction, $filledVehicleAvailableRateXML);
@@ -103,7 +104,7 @@ class LocalizaAPIVehAvailRate extends LocalizaAPI {
 
 
 
-    private function getFilledInputXML() {
+    public function getFilledInputXML(): string {
         return <<<XML
         <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
             <s:Body
