@@ -30,23 +30,19 @@ class VehRes implements Arrayable {
     }
 
     private function getReservationStatus(): array {
-        $node = $this->node->xpath(".//A:VehReservation");
         $result = [
             'reservationStatus' => null,
         ];
 
-        if(count($node) > 0){
-            $node = $node[0];
-            $result['reservationStatus'] = (string) $node->attributes()->ReservationStatus;
-        }
-        else abort(new NoDataFoundException);
+        $result['reservationStatus'] = (string) $this->node->attributes()->ReservationStatus;
 
         return $result;
     }
 
     public function toArray(): array{
-        return array_merge([
-            $this->getReserveCode()
-        ]);
+        return array_merge(
+            $this->getReserveCode(),
+            $this->getReservationStatus()
+        );
     }
 }

@@ -2,11 +2,16 @@
 
 namespace App\Rentcar\Localiza\VehRes;
 
+use App\Rentcar\Localiza\Contracts\LocalizaAPIRequest;
+use App\Rentcar\Localiza\Exceptions\TimeoutException;
+use App\Rentcar\Localiza\Exceptions\VehRes\NoReservationStatusException;
+use App\Rentcar\Localiza\Exceptions\VehRes\NoReserveCodeException;
+use App\Rentcar\Localiza\ProcessWarning;
 use App\Rentcar\Localiza\LocalizaAPI;
 use App\Rentcar\Localiza\VehRes\VehRes;
 use SimpleXMLElement;
 
-class LocalizaAPIVehRes extends LocalizaAPI {
+class LocalizaAPIVehRes extends LocalizaAPI implements LocalizaAPIRequest {
 
     private $name;
     private $email;
@@ -19,7 +24,6 @@ class LocalizaAPIVehRes extends LocalizaAPI {
     private $category;
     private $rateQualifier;
 
-
     private $soapAction = '"http://www.opentravel.org/OTA/2003/05:OTA_VehResRQ"';
     private $context;
 
@@ -27,9 +31,6 @@ class LocalizaAPIVehRes extends LocalizaAPI {
         $name,
         $email,
         $phoneNumber,
-        $phonePrefix,
-        $documentType,
-        $document,
         $referenceToken,
         $returnDateTime,
         $pickupDateTime,
@@ -44,16 +45,61 @@ class LocalizaAPIVehRes extends LocalizaAPI {
         $this->email = $email;
         $this->phoneNumber = $phoneNumber;
         $this->referenceToken = $referenceToken;
-        $this->returnDateTime = $returnDateTime;
         $this->pickupDateTime = $pickupDateTime;
-        $this->returnLocation = $returnLocation;
+        $this->returnDateTime = $returnDateTime;
         $this->pickupLocation = $pickupLocation;
+        $this->returnLocation = $returnLocation;
         $this->category = $category;
         $this->rateQualifier = $rateQualifier;
 
+        $this->context = [
+            'pickupDateTime'    => $pickupDateTime,
+            'returnDateTime'    => $returnDateTime,
+            'pickupLocation'    => $pickupLocation,
+            'returnLocation'    => $returnLocation,
+            'category'          => $category,
+            'rateQualifier'     => $rateQualifier,
+        ];
+
     }
 
-    private function getFilledInputXML(){
+    public function getData(): array
+    {
+        try {
+            $filledVehicleAvailableRateXML = $this->getFilledInputXML();
+            $response = $this->callAPI($this->soapAction, $filledVehicleAvailableRateXML);
+        }
+        catch(\Exception $th){
+            abort(new TimeoutException($this->context));
+        }
+
+        $xml = new SimpleXMLElement($response->body());
+        $xml->registerXPathNamespace("OTA",$this->namespace);
+
+        $warnings = (array) $xml->xpath("//OTA:Warning");
+        if(count($warnings) > 0) {
+            new ProcessWarning($warnings[0], $this->context);
+        }
+
+        $reservationNodes = (array) $xml->xpath("//OTA:VehReservation");
+
+        if(count($reservationNodes) > 0){
+            $reservationNode = $reservationNodes[0];
+            $reservationNode->registerXPathNamespace("A", $this->namespace);
+            $reservationData = (new VehRes($reservationNode))->toArray();
+
+            if(!$reservationData['reserveCode'])
+                abort(new NoReserveCodeException($this->context));
+            if(!$reservationData['reservationStatus'])
+                abort(new NoReservationStatusException($this->context));
+
+            return $reservationData;
+        }
+
+        return [];
+    }
+
+    public function getFilledInputXML() : string {
         return <<<XML
                 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:ns="http://www.opentravel.org/OTA/2003/05">
                     <soapenv:Body>
