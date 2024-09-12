@@ -110,6 +110,9 @@
               <p class="mediana">
                 {{ reservation.category_name }}
               </p>
+              <p class="mediana">
+                {{ reservation.category_category }}
+              </p>
             </div>
           </div>
           <p class="grande-light text-center">Datos Financieros</p>
