@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Enums\IdentificationType;
+use App\Enums\ReservationStatus;
 use App\Models\Branch;
 
 trait ReservationFormatTrait {
@@ -134,6 +135,23 @@ trait ReservationFormatTrait {
     public function formattedReturnHour(): Attribute {
         return Attribute::make(
             get: fn () => $this->hourFormat($this->return_hour)
+        );
+    }
+
+    public function formattedClientReservationStatus(): Attribute {
+        $formatted_status = null;
+        $status = ReservationStatus::tryFrom($this->status) ?? null;
+
+        if($status){
+            $formatted_status = match($status) {
+                ReservationStatus::ConCodigo => "Aprobado",
+                ReservationStatus::ConCodigoEnRevision => "En revisión",
+                default => null
+            };
+        }
+
+        return Attribute::make(
+            get: fn() => $formatted_status
         );
     }
 
