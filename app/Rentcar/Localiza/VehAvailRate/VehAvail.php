@@ -273,7 +273,7 @@ class VehAvail implements Arrayable {
 
         if(count($node) > 0){
             $node = $node[0];
-            $result['referenceToken'] = $this->roundPrice($node->attributes()->ID);
+            $result['referenceToken'] = (string) $node->attributes()->ID;
         }
 
         //TODO  convert to other currency
