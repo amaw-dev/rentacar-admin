@@ -52,8 +52,11 @@ class LocalizaAPIVehRes extends LocalizaAPI implements LocalizaAPIRequest {
             $filledVehicleReservationXML = $this->getFilledInputXML();
             $response = $this->callAPI($this->soapAction, $filledVehicleReservationXML);
         }
-        catch(\Exception $th){
+        catch(ConnectionException $th){
             abort(new TimeoutException($this->context));
+        }
+        catch(\Exception $th){
+            abort(new UnknowException($this->context));
         }
 
         $xml = new SimpleXMLElement($response->body());
