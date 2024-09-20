@@ -5,7 +5,6 @@ namespace App\Traits;
 trait MultipleAttributeSetter
 {
     private array $attributes;
-    private array $undefinedAttributes;
 
     /**
      * Establece múltiples atributos a la vez, manejando tanto propiedades definidas como atributos dinámicos.
@@ -24,14 +23,6 @@ trait MultipleAttributeSetter
                     $this->$method($value);
                 } else {
                     $this->$key = $value;
-                }
-            } else {
-                // Para cualquier otro atributo, lo agregamos a un array de atributos dinámicos
-                // Aquí deberías tener una propiedad privada $attributes o similar definida en la clase que use este trait.
-                if (isset($this->undefinedAttributes)) {
-                    $this->undefinedAttributes[$key] = $value;
-                } else {
-                    throw new \Exception("La propiedad \$undefinedAttributes no está definida para manejar atributos dinámicos.");
                 }
             }
         }
