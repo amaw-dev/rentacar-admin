@@ -18,17 +18,13 @@ class LocalizaAPIVehResTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Group("localiza_veh_res")]
-    #[Group("localiza")]
-    #[Test]
-    public function get_data_for_confirmed_reservation(){
+    private $defaultPayload;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
         Http::preventStrayRequests();
-
-        $xml = (View::make('localiza.tests.responses.vehres.vehres-confirmed-xml'))->render();
-
-        Http::fake([
-            '*' =>  Http::response($xml, 200)
-        ]);
 
         $reservation = Reservation::factory()->make();
 
@@ -45,17 +41,33 @@ class LocalizaAPIVehResTest extends TestCase
         $pickupDateTime = $reservation->getPickupDateTime();
         $returnDateTime = $reservation->getReturnDateTime();
 
+        $this->defaultPayload = [
+            "fullname" => $name,
+            "email" => $email,
+            "phone" => $phoneNumber,
+            "pickup_datetime" => $pickupDateTime,
+            "return_datetime" => $returnDateTime,
+            "pickup_location" => $pickupLocation,
+            "return_location" => $returnLocation,
+            "category" => $category,
+            "reference_token" => $referenceToken,
+            "rate_qualifier" => $rateQualifier
+        ];
+    }
+
+    #[Group("localiza_veh_res")]
+    #[Group("localiza")]
+    #[Test]
+    public function get_data_for_confirmed_reservation(){
+
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
         $localizaReservation = new LocalizaAPIVehRes(
-            name: $name,
-            email: $email,
-            phoneNumber: $phoneNumber,
-            pickupDateTime: $pickupDateTime,
-            returnDateTime: $returnDateTime,
-            pickupLocation: $pickupLocation,
-            returnLocation: $returnLocation,
-            category: $category,
-            referenceToken: $referenceToken,
-            rateQualifier: $rateQualifier
+            $this->defaultPayload
         );
 
         $data = $localizaReservation->getData();
