@@ -3,10 +3,13 @@
 namespace Tests\Feature\Localiza;
 
 use App\Enums\MonthlyMileage;
-use App\Mail\AlquicarrosReservationRequest;
-use App\Mail\AlquilameReservationRequest;
-use App\Mail\AlquilatucarroReservationRequest;
+use App\Mail\ReservationClientNotification\AlquicarrosReservationClientNotification;
+use App\Mail\ReservationClientNotification\AlquilameReservationClientNotification;
+use App\Mail\ReservationClientNotification\AlquilatucarroReservationClientNotification;
+use App\Mail\ReservationClientNotification\ReservationClientNotification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Group;
@@ -17,20 +20,32 @@ use App\Models\Branch;
 use App\Models\Franchise;
 use App\Models\Reservation;
 use App\Models\Category;
-use App\Mail\LocalizaReservationRequest;
 
 class ReservationAPITest extends TestCase
 {
     use RefreshDatabase;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Http::preventStrayRequests();
+
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        Mail::fake();
+
+    }
 
     #[Group("reservation_api")]
     #[Group("localiza")]
     #[Test]
     public function store_a_default_reservation()
     {
-        Mail::fake();
-
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -52,7 +67,7 @@ class ReservationAPITest extends TestCase
         $reservationData['category'] = $category->identification;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -68,9 +83,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_monthly_mileage()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -93,7 +106,7 @@ class ReservationAPITest extends TestCase
         $reservationData['monthly_mileage'] = MonthlyMileage::twoKKms->value;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -110,9 +123,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_empty_string_monthly_mileage()
     {
-        Mail::fake();
-
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -135,7 +145,7 @@ class ReservationAPITest extends TestCase
         $reservationData['monthly_mileage'] = "";
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -152,9 +162,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_null_monthly_mileage()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -177,7 +185,7 @@ class ReservationAPITest extends TestCase
         $reservationData['monthly_mileage'] = null;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -194,8 +202,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_total_insurance()
     {
-        Mail::fake();
-
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
         ]);
@@ -217,7 +223,7 @@ class ReservationAPITest extends TestCase
         $reservationData['total_insurance'] = true;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -234,8 +240,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_no_total_insurance()
     {
-        Mail::fake();
-
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
         ]);
@@ -257,7 +261,7 @@ class ReservationAPITest extends TestCase
         $reservationData['total_insurance'] = false;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -274,9 +278,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_return_fee()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -299,7 +301,7 @@ class ReservationAPITest extends TestCase
         $reservationData['return_fee'] = 100;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -316,9 +318,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_null_return_fee()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -341,7 +341,7 @@ class ReservationAPITest extends TestCase
         $reservationData['return_fee'] = null;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -358,9 +358,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_empty_string_return_fee()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -383,7 +381,7 @@ class ReservationAPITest extends TestCase
         $reservationData['return_fee'] = "";
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -400,9 +398,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_total_price_to_pay()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -425,7 +421,7 @@ class ReservationAPITest extends TestCase
         $reservationData['total_price_to_pay'] = 100;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -442,9 +438,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_default_reservation_with_total_price_to_pay_null_and_show_error()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -475,9 +469,7 @@ class ReservationAPITest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function send_a_mail_to_localiza_car_provider_when_record_a_reservation(): void {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -499,12 +491,12 @@ class ReservationAPITest extends TestCase
         $reservationData['category'] = $category->identification;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
 
-        Mail::assertQueued(LocalizaReservationRequest::class);
-        Mail::assertQueued(fn(LocalizaReservationRequest $mail) =>
+        Mail::assertQueued(ReservationClientNotification::class);
+        Mail::assertQueued(fn(ReservationClientNotification $mail) =>
             $mail->reservation->fullname == $reservation->fullname &&
             $mail->reservation->category == $reservation->category &&
             $mail->reservation->franchise == $reservation->franchise
@@ -516,9 +508,7 @@ class ReservationAPITest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function send_a_alquilatucarro_mail_to_localiza_car_provider_when_record_a_reservation(): void {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -540,12 +530,12 @@ class ReservationAPITest extends TestCase
         $reservationData['category'] = $category->identification;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
 
-        Mail::assertQueued(AlquilatucarroReservationRequest::class);
-        Mail::assertQueued(fn(AlquilatucarroReservationRequest $mail) =>
+        Mail::assertQueued(AlquilatucarroReservationClientNotification::class);
+        Mail::assertQueued(fn(AlquilatucarroReservationClientNotification $mail) =>
             $mail->reservation->fullname == $reservation->fullname &&
             $mail->reservation->category == $reservation->category &&
             $mail->reservation->franchise == $reservation->franchise
@@ -556,9 +546,7 @@ class ReservationAPITest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function send_a_alquilame_mail_to_localiza_car_provider_when_record_a_reservation(): void {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -580,12 +568,12 @@ class ReservationAPITest extends TestCase
         $reservationData['category'] = $category->identification;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
 
-        Mail::assertQueued(AlquilameReservationRequest::class);
-        Mail::assertQueued(fn(AlquilameReservationRequest $mail) =>
+        Mail::assertQueued(AlquilameReservationClientNotification::class);
+        Mail::assertQueued(fn(AlquilameReservationClientNotification $mail) =>
             $mail->reservation->fullname == $reservation->fullname &&
             $mail->reservation->category == $reservation->category &&
             $mail->reservation->franchise == $reservation->franchise
@@ -596,9 +584,7 @@ class ReservationAPITest extends TestCase
     #[Group("localiza")]
     #[Test]
     public function send_a_alquicarros_mail_to_localiza_car_provider_when_record_a_reservation(): void {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -620,12 +606,12 @@ class ReservationAPITest extends TestCase
         $reservationData['category'] = $category->identification;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
 
-        Mail::assertQueued(AlquicarrosReservationRequest::class);
-        Mail::assertQueued(fn(AlquicarrosReservationRequest $mail) =>
+        Mail::assertQueued(AlquicarrosReservationClientNotification::class);
+        Mail::assertQueued(fn(AlquicarrosReservationClientNotification $mail) =>
             $mail->reservation->fullname == $reservation->fullname &&
             $mail->reservation->category == $reservation->category &&
             $mail->reservation->franchise == $reservation->franchise
@@ -637,8 +623,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_reservation_with_a_non_existent_pickup_location_and_fail()
     {
-        Mail::fake();
-
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
         ]);
@@ -660,7 +644,7 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(LocalizaReservationRequest::class);
+        Mail::assertNotQueued(ReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -668,8 +652,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_reservation_with_a_non_existent_return_location_and_fail()
     {
-        Mail::fake();
-
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
         ]);
@@ -691,7 +673,7 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(LocalizaReservationRequest::class);
+        Mail::assertNotQueued(ReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -699,8 +681,6 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function store_a_reservation_with_a_non_existent_franchise_and_fail()
     {
-        Mail::fake();
-
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
         ]);
@@ -722,14 +702,13 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(LocalizaReservationRequest::class);
+        Mail::assertNotQueued(ReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
     #[Group("localiza")]
     #[Test]
     public function real_data_test(): void {
-        Mail::fake();
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT',
@@ -768,10 +747,12 @@ class ReservationAPITest extends TestCase
             'total_price'           => "935829",
             'total_price_to_pay'           => "1000000",
             'franchise'           => 'alquilame',
+            'rate_qualifier'           => '1234',
+            'reference_token'           => '1234',
         ];
 
         $response = $this->post(route('reserve.store'), $reservationData);
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
@@ -786,9 +767,7 @@ class ReservationAPITest extends TestCase
     #[Test]
     public function when_the_request_has_total_coverage_send_a_email_with_the_total_price_with_full_coverage()
     {
-        Mail::fake();
 
-        $localizaReservationEmail = config('localiza.reservationEmailAddress');
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -811,7 +790,7 @@ class ReservationAPITest extends TestCase
         $reservationData['total_insurance'] = 0;
 
         $response = $this->post(route('reserve.store'), $reservationData->toArray());
-        $response->assertCreated();
+        $response->assertOk();
 
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
