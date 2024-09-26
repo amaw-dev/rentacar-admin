@@ -2,8 +2,7 @@
 
 Estimado/a {{ $reserva->fullname }},
 
-Le informamos que su solicitud de reserva está en el estado <b>{{ $reserva->formatted_client_reservation_status }}</b>.
-Estamos revisándola y le proporcionaremos una respuesta tan pronto como sea posible.
+<h1>Su reserva ha sido <strong>{{ $reserva->formatted_client_reservation_status }}</strong></h1>
 
 El código asociado a la reserva es: <b>{{ $reserva->reserve_code }}</b>
 
@@ -26,11 +25,11 @@ Retorno: {{ $reserva->formatted_return_place }} <br/>
 Fecha: {{ $reserva->formatted_return_date }} {{ $reserva->formatted_return_hour }} <br/>
 
 @if ($reserva->total_insurance)
-El cliente requiere seguro total
+Ha solicitado seguro total
 @endif
 
 @if ($reserva->monthly_mileage)
-El cliente ha seleccionado el kilometraje: {{ $reserva->monthly_mileage }}
+Ha seleccionado el kilometraje: {{ $reserva->monthly_mileage }}
 @endif
 
 ---
