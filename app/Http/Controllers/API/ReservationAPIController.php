@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
-use \Sentry\captureException;
 use UnexpectedValueException;
 use Exception;
 
@@ -68,11 +67,11 @@ class ReservationAPIController extends Controller
         } catch (UnexpectedValueException $exception) {
             Log::error($exception->getMessage());
             abort(500, __('localiza.no_reservation_status'));
-            captureException($exception);
+            \Sentry\captureException($exception);
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
             abort(500, __('localiza.error_saving_reservation'));
-            captureException($exception);
+            \Sentry\captureException($exception);
         }
 
     }

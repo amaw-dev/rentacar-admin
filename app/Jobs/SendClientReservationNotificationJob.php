@@ -16,8 +16,6 @@ use App\Mail\ReservationClientNotification\AlquilatucarroReservationClientNotifi
 use App\Mail\ReservationClientNotification\AlquilameReservationClientNotification;
 use App\Mail\ReservationClientNotification\AlquicarrosReservationClientNotification;
 
-use \Sentry\captureException;
-
 class SendClientReservationNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -57,7 +55,7 @@ class SendClientReservationNotificationJob implements ShouldQueue
                 ->send(new $franchiseEmail($this->reservation));
             } catch (\Throwable $th) {
                 Log::error($th->getMessage());
-                captureException($th);
+                \Sentry\captureException($th);
             }
         }
     }
