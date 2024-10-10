@@ -27,8 +27,7 @@ class ReservationAPIController extends Controller
     {
         $reservationSavingData = $request->safe()->except(['rate_qualifier','reference_token']);
         $reservationLocalizaApiData = $request->safe()->only([
-            'fullname','email','phone','reference_token',
-            'category','rate_qualifier','pickup_location','return_location'
+            'fullname','email','phone','reference_token','rate_qualifier'
         ]);
 
         $reservation = new Reservation();
@@ -37,6 +36,9 @@ class ReservationAPIController extends Controller
         $payload = array_merge($reservationLocalizaApiData, [
             'pickup_datetime' => $reservation->getPickupDateTime(),
             'return_datetime' => $reservation->getReturnDateTime(),
+            'category'      => $request->original_category,
+            'pickup_location'      => $request->original_pickup_location,
+            'return_location'      => $request->original_return_location,
         ]);
 
         $localizaApi = new LocalizaAPIVehRes(
