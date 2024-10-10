@@ -39,7 +39,7 @@ class LocalizaAPIVehResTest extends TestCase
             'category'          => $category,
         ] = $reservation->toArray();
         $referenceToken = fake()->sha256();
-        $rateQualifier = fake()->numberBetween(1,9999);
+        $rateQualifier = (string) fake()->numberBetween(1,9999);
         $pickupDateTime = $reservation->getPickupDateTime();
         $returnDateTime = $reservation->getReturnDateTime();
 

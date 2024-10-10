@@ -247,12 +247,12 @@ class VehAvail implements Arrayable {
     private function getRateQualifier(): array {
         $node = $this->node->xpath('.//A:RateQualifier');
         $result = [
-            'rateQualifier' => 0,
+            'rateQualifier' => "",
         ];
 
         if(count($node) > 0){
             $node = $node[0];
-            $result['rateQualifier'] = $this->roundPrice($node->attributes()->RateQualifier);
+            $result['rateQualifier'] = (string) $node->attributes()->RateQualifier;
         }
 
         //TODO  convert to other currency
