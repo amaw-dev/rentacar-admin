@@ -75,7 +75,7 @@ class Reservation extends Model
         $pickupDate->hour = $pickupHour->hour;
         $pickupDate->minute = $pickupHour->minute;
 
-        return $pickupDate->format('Y-m-d H:i:s');
+        return $pickupDate->format('Y-m-d\TH:i:s');
     }
 
     /**
@@ -89,7 +89,7 @@ class Reservation extends Model
         $returnDate->hour = $returnHour->hour;
         $returnDate->minute = $returnHour->minute;
 
-        return $returnDate->format('Y-m-d H:i:s');
+        return $returnDate->format('Y-m-d\TH:i:s');
     }
 
     /**

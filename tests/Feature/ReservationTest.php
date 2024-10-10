@@ -1021,7 +1021,7 @@ class ReservationTest extends TestCase
         ]);
 
 
-        $this->assertEquals('2028-01-01 08:00:00', $reservation->getPickupDateTime());
+        $this->assertEquals('2028-01-01T08:00:00', $reservation->getPickupDateTime());
     }
 
     #[Group("reservation")]
@@ -1034,7 +1034,7 @@ class ReservationTest extends TestCase
         ]);
 
 
-        $this->assertEquals('2028-01-01 08:00:00', $reservation->getReturnDateTime());
+        $this->assertEquals('2028-01-01T08:00:00', $reservation->getReturnDateTime());
     }
 
 }
