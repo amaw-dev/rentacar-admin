@@ -121,7 +121,7 @@ class LocalizaAPIVehResTest extends TestCase
 
         if(count($phoneNodes) > 0){
             $phoneNode = $phoneNodes[0];
-            $countryCodePhone = $phoneNode->attributes()->AreaCityCode;
+            $countryCodePhone = $phoneNode->attributes()->CountryCode;
             $phone = $phoneNode->attributes()->PhoneNumber;
             $this->assertEquals('57', $countryCodePhone);
             $this->assertEquals('3155555555', $phone);
@@ -147,7 +147,7 @@ class LocalizaAPIVehResTest extends TestCase
 
         if(count($phoneNodes) > 0){
             $phoneNode = $phoneNodes[0];
-            $countryCodePhone = $phoneNode->attributes()->AreaCityCode;
+            $countryCodePhone = $phoneNode->attributes()->CountryCode;
             $phone = $phoneNode->attributes()->PhoneNumber;
             $this->assertEquals('1', $countryCodePhone);
             $this->assertEquals('3155555555', $phone);
