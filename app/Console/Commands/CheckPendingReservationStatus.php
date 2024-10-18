@@ -8,6 +8,7 @@ use App\Jobs\SendClientReservationNotificationJob;
 use App\Models\Reservation;
 use App\Rentcar\Localiza\VehRetRes\LocalizaAPIVehRetRes;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckPendingReservationStatus extends Command
 {
@@ -70,10 +71,9 @@ class CheckPendingReservationStatus extends Command
 
             $localizaResponse = $localizaRequest->getData();
 
+            Log::info($localizaResponse);
 
             $reservationStatus = ReservationAPIStatus::tryFrom($localizaResponse['reservationStatus']) ?? null;
-
-            // dd($localizaResponse, $reservationStatus);
 
             if($reservationStatus){
 

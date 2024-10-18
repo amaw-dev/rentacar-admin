@@ -12,6 +12,7 @@ use App\Rentcar\Localiza\LocalizaAPI;
 use App\Rentcar\Localiza\VehRetRes\VehRetRes;
 use App\Traits\MultipleAttributeSetter;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 
 class LocalizaAPIVehRetRes extends LocalizaAPI implements LocalizaAPIRequest {
@@ -38,12 +39,15 @@ class LocalizaAPIVehRetRes extends LocalizaAPI implements LocalizaAPIRequest {
     {
         try {
             $filledVehicleReservationXML = $this->getFilledInputXML();
+            Log::info($filledVehicleReservationXML);
             $response = $this->callAPI($this->soapAction, $filledVehicleReservationXML);
         }
         catch(ConnectionException $th){
+            Log::error($th);
             abort(new TimeoutException($this->context));
         }
         catch(\Exception $th){
+            Log::error($th);
             abort(new UnknowException($this->context));
         }
 
