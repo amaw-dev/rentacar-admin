@@ -146,6 +146,7 @@ trait ReservationFormatTrait {
             $formatted_status = match($status) {
                 ReservationStatus::Reservado => "Aprobado",
                 ReservationStatus::Pendiente => "En revisión",
+                ReservationStatus::SinDisponibilidad => "Sin disponibilidad",
                 default => null
             };
         }
