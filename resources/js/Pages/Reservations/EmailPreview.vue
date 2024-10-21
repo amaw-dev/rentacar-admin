@@ -53,7 +53,15 @@
               <p class="columna"></p>
               <div class="columna">
                 <p class="pequeña">
-                  {{ reservation.pickup_branch }}
+                  {{ reservation.pickup_branch_name }}
+                </p>
+              </div>
+            </div>
+            <div class="fila">
+              <p class="columna"></p>
+              <div class="columna">
+                <p class="pequeña">
+                  {{ reservation.pickup_branch_address }}
                 </p>
                 <div style="width: 37%">
                   <img class="img-fluid" :src="localiza_image_url" alt="agencia" />
@@ -85,7 +93,13 @@
             <div class="fila">
               <p class="pequeña columna text-right"></p>
               <p class="pequeña columna">
-                {{ reservation.return_branch }}
+                {{ reservation.return_branch_name }}
+              </p>
+            </div>
+            <div class="fila">
+              <p class="pequeña columna text-right"></p>
+              <p class="pequeña columna">
+                {{ reservation.return_branch_address }}
               </p>
             </div>
           </div>
