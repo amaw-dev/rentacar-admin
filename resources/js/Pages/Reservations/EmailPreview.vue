@@ -22,11 +22,33 @@
                             background-color: #ffffff;
                         "
                     >
-                        <img
-                            width="70"
-                            class="img-fluid"
-                            :src="qrCode"
-                            alt=""
+                        <QRCodeVue3
+                            :value="reservation.reserve_code"
+                            :qr-options="{
+                                typeNumber: '0',
+                                mode: 'Byte',
+                                errorCorrectionLevel: 'Q',
+                            }"
+                            :image-options="{
+                                saveAsBlob: true,
+                                hideBackgroundDots: true,
+                                imageSize: 0.4,
+                                margin: 0,
+                            }"
+                            :corners-square-options="{
+                                type: '',
+                                color: '#000000',
+                            }"
+                            :corners-dot-options="{
+                                type: '',
+                                color: '#000000',
+                            }"
+                            :dots-options="{
+                                type: 'square',
+                                color: '#030303',
+                                roundSize: true,
+                            }"
+                            :download="false"
                         />
                     </div>
                     <div style="margin-top: 12%">
@@ -138,9 +160,6 @@
                             </p>
                             <p class="mediana">
                                 {{ reservation.category_category }}
-                            </p>
-                            <p class="pequeña-light">
-                                *Suzuki Presso o Similar*
                             </p>
                         </div>
                     </div>
@@ -271,6 +290,7 @@
                                 {{ reservation.identification_type }}
                                 {{ reservation.identification }}
                             </p>
+
                             <p class="pequeña-light">
                                 Único Reservante Autorizado
                             </p>
@@ -317,6 +337,7 @@
 
 <script setup>
 import { onMounted, computed } from "vue";
+import QRCodeVue3 from "qrcode-vue3";
 
 const props = defineProps({
     reservation: Object,
@@ -325,8 +346,6 @@ const props = defineProps({
 });
 
 const layout = null;
-
-const qrCode = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${props.reservation.reserve_code}`;
 
 function adjustFontSize() {
     const config1 = [
