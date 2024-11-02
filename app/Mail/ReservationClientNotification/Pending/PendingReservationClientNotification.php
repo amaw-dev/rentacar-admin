@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\ReservationClientNotification;
+namespace App\Mail\ReservationClientNotification\Pending;
 
 use App\Http\Resources\ReservationEmailPreviewResource;
 use App\Models\Reservation;
@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ReservationClientNotification extends Mailable implements ShouldQueue
+class PendingReservationClientNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -25,7 +25,7 @@ class ReservationClientNotification extends Mailable implements ShouldQueue
         $this->reservation = $reservation;
 
         $this->to($this->reservation->email);
-        $this->subject("Detalles de reserva");
+        $this->subject("Reserva Pendiente");
     }
 
     /**
@@ -38,6 +38,6 @@ class ReservationClientNotification extends Mailable implements ShouldQueue
         $reservationResource = (new ReservationEmailPreviewResource($this->reservation))->toArray(request());
         $reservation = array_merge($reservationResource, ['reserva' => $this->reservation]);
 
-        return $this->markdown('mail.reservation_client_notification.notification', $reservation);
+        return $this->markdown('mail.reservation_client_notification.pending.pending', $reservation);
     }
 }

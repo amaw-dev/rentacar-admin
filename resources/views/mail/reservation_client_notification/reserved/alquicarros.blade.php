@@ -1,4 +1,4 @@
-@extends("mail.reservation_client_notification.notification")
+@extends("mail.reservation_client_notification.reserved.reserved")
 
 @section('franchise')
 

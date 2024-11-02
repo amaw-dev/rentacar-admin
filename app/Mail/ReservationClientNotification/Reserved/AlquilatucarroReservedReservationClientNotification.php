@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Mail\ReservationClientNotification;
+namespace App\Mail\ReservationClientNotification\Reserved;
 
-use App\Models\Reservation;
 use App\Http\Resources\ReservationEmailPreviewResource;
+use App\Models\Reservation;
 
-class AlquicarrosReservationClientNotification extends ReservationClientNotification {
+class AlquilatucarroReservedReservationClientNotification extends ReservedReservationClientNotification {
 
     /**
      * Create a new message instance.
@@ -15,8 +15,8 @@ class AlquicarrosReservationClientNotification extends ReservationClientNotifica
     public function __construct(Reservation $reservation)
     {
         parent::__construct($reservation);
-        $email = config('mail.mailers.alquicarros.username');
-        $this->from($email, "Alquicarros");
+        $email = config('mail.mailers.alquilatucarro.username');
+        $this->from($email, "Alquilatucarro");
 
     }
 
@@ -28,8 +28,9 @@ class AlquicarrosReservationClientNotification extends ReservationClientNotifica
     public function build()
     {
         $reservationResource = (new ReservationEmailPreviewResource($this->reservation))->toArray(request());
+
         $reservation = array_merge($reservationResource, ['reserva' => $this->reservation]);
 
-        return $this->markdown('mail.reservation_client_notification.alquicarros', $reservation);
+        return $this->markdown('mail.reservation_client_notification.reserved.alquilatucarro', $reservation);
     }
 }

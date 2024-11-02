@@ -2,14 +2,23 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Models\Reservation;
-use App\Console\Commands\CheckPendingReservationStatus;
-use App\Mail\ReservationClientNotification\ReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquilatucarroReservationClientNotification;
-use App\Enums\ReservationStatus;
-use App\Mail\ReservationClientNotification\AlquicarrosReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquilameReservationClientNotification;
 use App\Models\Franchise;
+use App\Models\Reservation;
+use App\Enums\ReservationStatus;
+use App\Console\Commands\CheckPendingReservationStatus;
+use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilatucarroReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilameReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquicarrosReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\FailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilatucarroFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilameFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquicarrosFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\PendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilatucarroPendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilamePendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquicarrosPendingReservationClientNotification;
+
 use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -55,7 +64,7 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Reservado->value, $reservation->status);
-        Mail::assertQueued(ReservationClientNotification::class);
+        Mail::assertQueued(ReservedReservationClientNotification::class);
 
     }
 
@@ -84,7 +93,7 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Reservado->value, $reservation->status);
-        Mail::assertQueued(AlquilatucarroReservationClientNotification::class);
+        Mail::assertQueued(AlquilatucarroReservedReservationClientNotification::class);
 
     }
 
@@ -113,7 +122,7 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Reservado->value, $reservation->status);
-        Mail::assertQueued(AlquilameReservationClientNotification::class);
+        Mail::assertQueued(AlquilameReservedReservationClientNotification::class);
 
     }
 
@@ -142,7 +151,7 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Reservado->value, $reservation->status);
-        Mail::assertQueued(AlquicarrosReservationClientNotification::class);
+        Mail::assertQueued(AlquicarrosReservedReservationClientNotification::class);
 
     }
 
@@ -199,7 +208,7 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::SinDisponibilidad->value, $reservation->status);
-        Mail::assertQueued(ReservationClientNotification::class);
+        Mail::assertQueued(FailedReservationClientNotification::class);
 
     }
 
@@ -228,7 +237,8 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Indeterminado->value, $reservation->status);
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
+        Mail::assertNotQueued(PendingReservationClientNotification::class);
 
     }
 
@@ -257,7 +267,8 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Indeterminado->value, $reservation->status);
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
+        Mail::assertNotQueued(PendingReservationClientNotification::class);
 
     }
 
@@ -286,7 +297,8 @@ class CheckPendingReservationStatusTest extends TestCase {
         $reservation->refresh();
 
         $this->assertEquals(ReservationStatus::Pendiente->value, $reservation->status);
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
+        Mail::assertNotQueued(PendingReservationClientNotification::class);
 
     }
 }

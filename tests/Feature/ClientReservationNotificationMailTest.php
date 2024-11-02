@@ -11,10 +11,19 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-use App\Mail\ReservationClientNotification\AlquilatucarroReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquilameReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquicarrosReservationClientNotification;
-use App\Mail\ReservationClientNotification\ReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilatucarroReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilameReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquicarrosReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\FailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilatucarroFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilameFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquicarrosFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\PendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilatucarroPendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilamePendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquicarrosPendingReservationClientNotification;
+
 use App\Models\Category;
 use App\Models\Franchise;
 use App\Models\Reservation;
@@ -38,12 +47,12 @@ class ClientReservationNotificationMailTest extends TestCase
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function send_a_email_to_client(): void {
+    public function send_a_reserved_email_to_client(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id
         ]);
 
-        $mail = new ReservationClientNotification($reservation);
+        $mail = new ReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($reservation->fullname);
         $mail->assertSeeInHtml($reservation->short_identification_type);
         $mail->assertSeeInHtml($reservation->identification);
@@ -67,16 +76,17 @@ class ClientReservationNotificationMailTest extends TestCase
         $mail->assertSeeInText($reservation->formatted_pickup_hour);
         $mail->assertSeeInText($reservation->formatted_return_hour);
 
+        $mail->assertHasSubject('Reserva Aprobada');
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_from_alquilatucarro_and_check_data(): void {
+    public function render_reserved_email_from_alquilatucarro_and_check_data(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id
         ]);
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($reservation->fullname);
         $mail->assertSeeInHtml($reservation->short_identification_type);
         $mail->assertSeeInHtml($reservation->identification);
@@ -100,16 +110,19 @@ class ClientReservationNotificationMailTest extends TestCase
         $mail->assertSeeInText($reservation->formatted_pickup_hour);
         $mail->assertSeeInText($reservation->formatted_return_hour);
 
+        $mail->assertHasSubject('Reserva Aprobada');
+        $mail->assertSeeInHtml("www.alquilatucarro.com");
+        $mail->assertSeeInText("www.alquilatucarro.com");
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_from_alquilame_and_check_data(): void {
+    public function render_reserved_email_from_alquilame_and_check_data(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id
         ]);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($reservation->fullname);
         $mail->assertSeeInHtml($reservation->short_identification_type);
         $mail->assertSeeInHtml($reservation->identification);
@@ -133,16 +146,19 @@ class ClientReservationNotificationMailTest extends TestCase
         $mail->assertSeeInText($reservation->formatted_pickup_hour);
         $mail->assertSeeInText($reservation->formatted_return_hour);
 
+        $mail->assertHasSubject('Reserva Aprobada');
+        $mail->assertSeeInHtml("www.alquilame.co");
+        $mail->assertSeeInText("www.alquilame.co");
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_from_alquicarros_and_check_data(): void {
+    public function render_reserved_email_from_alquicarros_and_check_data(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id
         ]);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($reservation->fullname);
         $mail->assertSeeInHtml($reservation->short_identification_type);
         $mail->assertSeeInHtml($reservation->identification);
@@ -166,11 +182,14 @@ class ClientReservationNotificationMailTest extends TestCase
         $mail->assertSeeInText($reservation->formatted_pickup_hour);
         $mail->assertSeeInText($reservation->formatted_return_hour);
 
+        $mail->assertHasSubject('Reserva Aprobada');
+        $mail->assertSeeInHtml("www.alquicarros.com");
+        $mail->assertSeeInText("www.alquicarros.com");
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_where_theres_total_insurance(): void {
+    public function render_reserved_email_where_theres_total_insurance(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id,
             'total_insurance' => true
@@ -178,22 +197,22 @@ class ClientReservationNotificationMailTest extends TestCase
 
         $message = "Seguro total";
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_where_theres_no_total_insurance(): void {
+    public function render_reserved_email_where_theres_no_total_insurance(): void {
 
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id,
@@ -202,22 +221,22 @@ class ClientReservationNotificationMailTest extends TestCase
 
         $message = "Seguro básico";
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_where_theres_monthly_mileage_with_1k_kms(): void {
+    public function render_reserved_email_where_theres_monthly_mileage_with_1k_kms(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id,
             'selected_days' => 30,
@@ -226,22 +245,22 @@ class ClientReservationNotificationMailTest extends TestCase
 
         $message = "Kilometraje: 1k_kms";
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_where_theres_monthly_mileage_with_2k_kms(): void {
+    public function render_reserved_email_where_theres_monthly_mileage_with_2k_kms(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id,
             'selected_days' => 30,
@@ -250,22 +269,22 @@ class ClientReservationNotificationMailTest extends TestCase
 
         $message = "Kilometraje: 2k_kms";
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
     }
 
     #[Group("client_reservation_notification")]
     #[Test]
-    public function render_email_where_theres_monthly_mileage_with_3k_kms(): void {
+    public function render_reserved_email_where_theres_monthly_mileage_with_3k_kms(): void {
         $reservation = Reservation::factory()->create([
             'category'  => $this->category->id,
             'selected_days' => 30,
@@ -274,17 +293,81 @@ class ClientReservationNotificationMailTest extends TestCase
 
         $message = "Kilometraje: 3k_kms";
 
-        $mail = new AlquilatucarroReservationClientNotification($reservation);
+        $mail = new AlquilatucarroReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquilameReservationClientNotification($reservation);
+        $mail = new AlquilameReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
 
-        $mail = new AlquicarrosReservationClientNotification($reservation);
+        $mail = new AlquicarrosReservedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
         $mail->assertSeeInText($message);
+    }
+
+    #[Group("client_reservation_notification")]
+    #[Test]
+    public function render_pending_email(): void {
+        $reservation = Reservation::factory()->create([
+            'category'  => $this->category->id,
+        ]);
+
+        $message = "Le informamos que su solicitud de reserva está en proceso";
+
+        $mail = new AlquilatucarroPendingReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquilatucarro.com");
+        $mail->assertSeeInText("www.alquilatucarro.com");
+        $mail->assertHasSubject("Reserva Pendiente");
+
+        $mail = new AlquilamePendingReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquilame.co");
+        $mail->assertSeeInText("www.alquilame.co");
+        $mail->assertHasSubject("Reserva Pendiente");
+
+        $mail = new AlquicarrosPendingReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquicarros.com");
+        $mail->assertSeeInText("www.alquicarros.com");
+        $mail->assertHasSubject("Reserva Pendiente");
+
+    }
+
+    #[Group("client_reservation_notification")]
+    #[Test]
+    public function render_failed_email(): void {
+        $reservation = Reservation::factory()->create([
+            'category'  => $this->category->id,
+        ]);
+
+        $message = "Lamentamos notificarte que la gama solicitada no se encuentra disponible para la fecha";
+
+        $mail = new AlquilatucarroFailedReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquilatucarro.com");
+        $mail->assertSeeInText("www.alquilatucarro.com");
+        $mail->assertHasSubject("Reserva Sin Disponibilidad");
+
+        $mail = new AlquilameFailedReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquilame.co");
+        $mail->assertSeeInText("www.alquilame.co");
+        $mail->assertHasSubject("Reserva Sin Disponibilidad");
+
+        $mail = new AlquicarrosFailedReservationClientNotification($reservation);
+        $mail->assertSeeInHtml($message);
+        $mail->assertSeeInText($message);
+        $mail->assertSeeInHtml("www.alquicarros.com");
+        $mail->assertSeeInText("www.alquicarros.com");
+        $mail->assertHasSubject("Reserva Sin Disponibilidad");
+
     }
 
     #[Group("client_reservation_notification")]
@@ -337,7 +420,7 @@ class ClientReservationNotificationMailTest extends TestCase
 
         Mail::mailer($franchise->name)
                 ->to($reservation->email)
-                ->send(new AlquilatucarroReservationClientNotification($reservation));
+                ->send(new AlquilatucarroReservedReservationClientNotification($reservation));
 
     }
 }

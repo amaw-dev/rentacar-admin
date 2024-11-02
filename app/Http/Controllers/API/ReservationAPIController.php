@@ -64,14 +64,15 @@ class ReservationAPIController extends Controller
                     else if($reservationStatus === ReservationAPIStatus::Pending){
                         $reservation->status = ReservationStatus::Pendiente->value;
                         $reservationResult['reservationStatus'] = "Pendiente";
-
-                        dispatch(new SendLocalizaReservationRequestJob($reservation)); // aditional notification to localiza to hurry them up
                     }
 
                     $reservation->reserve_code = $reservationResult['reserveCode'];
 
-                    if($reservation->save())
+                    if($reservation->save()){
                         dispatch(new SendClientReservationNotificationJob($reservation));
+                        if($reservationStatus === ReservationAPIStatus::Pending)
+                            dispatch(new SendLocalizaReservationRequestJob($reservation)); // aditional notification to localiza to hurry them up
+                    }
 
                 }
 
@@ -82,7 +83,7 @@ class ReservationAPIController extends Controller
                 abort(500, __('localiza.no_reservation_status'));
                 \Sentry\captureException($exception);
             } catch (Exception $exception) {
-                Log::error($exception->getMessage());
+                Log::error($exception);
                 abort(500, __('localiza.error_saving_reservation'));
                 \Sentry\captureException($exception);
             }

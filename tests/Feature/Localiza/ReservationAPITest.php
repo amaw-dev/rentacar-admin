@@ -4,10 +4,18 @@ namespace Tests\Feature\Localiza;
 
 use App\Enums\MonthlyMileage;
 use App\Jobs\SendLocalizaReservationRequestJob;
-use App\Mail\ReservationClientNotification\AlquicarrosReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquilameReservationClientNotification;
-use App\Mail\ReservationClientNotification\AlquilatucarroReservationClientNotification;
-use App\Mail\ReservationClientNotification\ReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilatucarroReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquilameReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Reserved\AlquicarrosReservedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\FailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilatucarroFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquilameFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Failed\AlquicarrosFailedReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\PendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilatucarroPendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquilamePendingReservationClientNotification;
+use App\Mail\ReservationClientNotification\Pending\AlquicarrosPendingReservationClientNotification;
 use App\Mail\ReservationRequest\AlquilatucarroReservationRequest;
 use App\Mail\ReservationRequest\AlquilameReservationRequest;
 use App\Mail\ReservationRequest\AlquicarrosReservationRequest;
@@ -546,7 +554,7 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -581,7 +589,7 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -616,7 +624,7 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNull($reservation);
 
-        Mail::assertNotQueued(ReservationClientNotification::class);
+        Mail::assertNotQueued(ReservedReservationClientNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -986,4 +994,355 @@ class ReservationAPITest extends TestCase
         Queue::assertPushed(SendLocalizaReservationRequestJob::class);
     }
 
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Pendiente',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(PendingReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_by_alquilatucarro()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilatucarro'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Pendiente',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquilatucarroPendingReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_by_alquilame()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Pendiente',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquilamePendingReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_by_alquicarros()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquicarros'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Pendiente',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquicarrosPendingReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_reserved_then_send_a_reserved_notification_to_client()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Confirmado',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(ReservedReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_reserved_then_send_a_reserved_notification_to_client_by_alquilatucarro()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilatucarro'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Confirmado',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquilatucarroReservedReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_reserved_then_send_a_reserved_notification_to_client_by_alquilame()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Confirmado',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquilameReservedReservationClientNotification::class);
+    }
+
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("localiza")]
+    #[Test]
+    public function when_a_reservation_is_reserved_then_send_a_reserved_notification_to_client_by_alquicarros()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquicarros'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'AV1BRQW35U',
+            'reservationStatus' => 'Confirmado',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquicarrosReservedReservationClientNotification::class);
+    }
 }

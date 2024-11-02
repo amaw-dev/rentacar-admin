@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Mail\ReservationClientNotification;
+namespace App\Mail\ReservationClientNotification\Pending;
 
 use App\Models\Reservation;
 use App\Http\Resources\ReservationEmailPreviewResource;
 
-class AlquilameReservationClientNotification extends ReservationClientNotification {
+class AlquilamePendingReservationClientNotification extends PendingReservationClientNotification {
 
     /**
      * Create a new message instance.
@@ -30,6 +30,6 @@ class AlquilameReservationClientNotification extends ReservationClientNotificati
         $reservationResource = (new ReservationEmailPreviewResource($this->reservation))->toArray(request());
         $reservation = array_merge($reservationResource, ['reserva' => $this->reservation]);
 
-        return $this->markdown('mail.reservation_client_notification.alquilame', $reservation);
+        return $this->markdown('mail.reservation_client_notification.pending.alquilame', $reservation);
     }
 }

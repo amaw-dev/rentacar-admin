@@ -1,4 +1,4 @@
-@extends("mail.reservation_client_notification.notification")
+@extends("mail.reservation_client_notification.failed.failed")
 
 @section('franchise')
 
@@ -8,6 +8,6 @@ Web: www.alquilatucarro.com <br/>
 Tel: +57-301-672-9550 <br/>
 @endsection
 
-
+º
 
 
