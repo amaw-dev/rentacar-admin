@@ -11,7 +11,7 @@ body *:not(html):not(style):not(br):not(tr):not(code) {
 body {
     -webkit-text-size-adjust: none;
     background-color: #ffffff;
-    color: #718096;
+    color: black;
     height: 100%;
     line-height: 1.4;
     margin: 0;
@@ -60,7 +60,7 @@ h3 {
 }
 
 p {
-    font-size: 16px;
+    /* font-size: 16px; */
     line-height: 1.5em;
     margin-top: 0;
     text-align: left;
@@ -290,23 +290,18 @@ img {
 }
 
 /* customize amaw */
-.mytable {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 20px; /* Espacio entre tablas si hay más de una */
-    border: 1px solid #ddd; /* Borde para simular una tabla */
-    border-radius: 5px; /* Bordes redondeados para un toque moderno */
-    overflow: hidden; /* Para que los bordes redondeados no se vean cortados */
+.section {
+    background-color: #f9f9f9; /* Fondo blanco grisáceo */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-.col {
-    flex: 1;
-    padding: 10px; /* Espaciado interno */
-    margin: 5px; /* Espaciado externo */
-    background-color: #f9f9f9; /* Fondo blanco grisáceo */
-    border: 1px solid #ddd; /* Borde para cada columna */
-    border-radius: 3px; /* Bordes ligeramente redondeados */
-    min-width: 200px; /* Ancho mínimo para las columnas */
-    box-sizing: border-box; /* Para que el padding no afecte el width total */
+.aproved {
+    background-color: #8ae981; /* Fondo blanco grisáceo */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
 }
