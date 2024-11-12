@@ -1,41 +1,47 @@
 @component('mail::message')
-Estimado/a {{ $fullname }},
+
+<div class="aproved">
 
 # Su reserva está {{ $reservation_status }}
 
-El código asociado a la reserva es: **{{ $reserve_code }}** \
-Nombre del Arrendador: **{{ $reserva->fullname }}** \
-{{ $reserva->short_identification_type }} **{{ $reserva->identification }}**
+# El código de reserva: **{{ $reserve_code }}**
 
-ÚNICO RESERVANTE AUTORIZADO
+</div>
 
----
+<div class="section">
 
-<div class="mytable">
-<div class="col">
+**GAMA RESERVADA**
+
+{{ $category_name }}  \
+![categoria]({{ $category_image }} "{{ $category_name }}")  \
+**{{ $category_category }}**
+
+Arrendador: **{{ $reserva->fullname }}** \
+{{ $reserva->short_identification_type }} **{{ $reserva->identification }}** \
+Único Reservante Autorizado
+
+</div>
+
+<div class="section">
 
 **RECOGIDA**
 
 **Sucursal:** {{ $pickup_branch_name }} \
-**Dirección:** {{ $pickup_branch_address }} <a href="{{ $pickup_branch_map }}" target="_blank">Ver Mapa</a> \
+**Dirección:** {!! $pickup_branch_address !!} <a href="{{ $pickup_branch_map }}" target="_blank">Ver Mapa</a> \
 **Fecha y Hora:** {{ $pickup_date }} {{ $pickup_hour }}
 
 </div>
-<div class="col">
+<div class="section">
 
 **DEVOLUCIÓN**
 
 **Sucursal:** {{ $return_branch_name }} \
-**Dirección:** {{ $return_branch_address }} <a href="{{ $return_branch_map }}" target="_blank">Ver Mapa</a> \
+**Dirección:** {!! $return_branch_address !!} <a href="{{ $return_branch_map }}" target="_blank">Ver Mapa</a> \
 **Fecha y Hora:** {{ $return_date }} {{ $return_hour }}
 
 </div>
-</div>
 
----
-
-<div class="mytable">
-<div class="col">
+<div class="section">
 
 **DATOS FINANCIEROS**
 
@@ -52,80 +58,59 @@ Subtotal: {{ $subtotal_fee }}  \
 \+ Impuesto IVA (19%): {{ $iva_fee }}  \
 **Valor total**: {{ $total_fee }}
 
-</div>
-<div class="col">
-
-**GAMA RESERVADA**
-
-{{ $category_name }}  \
-![categoria]({{ $category_image }} "{{ $category_name }}")  \
-**{{ $category_category }}**
-
-</div>
-</div>
-
 **El valor Incluye:** {{ $included_fees }} \
 **Método de pago:** Tarjeta de Crédito en Sede
+**Descuentos:** Los descuentos adquiridos en esta reserva son Intransferibles y no se admiten cambios.
+Verifique que la información sea correcta o de lo contrario solicite cuanto antes una nueva reserva.
+Realizar una nueva reserva no garantiza obtener los descuentos de una reserva previa.
+</div>
 
----
+<div class="section">
 
-**Para tener en cuenta:** \
-Los descuentos adquiridos en esta reserva son Intransferibles.
-
-Solicitar cambios puede afectar los descuentos adquiridos, verifique que la información sea correcta
-o de lo contrario solicite cuanto antes una nueva reserva.
+**ANTES DE RECOGER EL VEHÍCULO**
 
 Preséntese en el lugar de recogida 30 minutos antes de la hora programada con los siguientes
 documentos:
 
-1. Tarjeta de Crédito
-2. Cédula ó Pasaporte
-3. Licencia de Conducción vigente
+1. **Tarjeta de Crédito** \
+Sólo se reciben pagos con tarjetas de crédito físicas, NO se aceptan pagos en efectivo ni otros
+medios de pago.
+2. **Cédula ó Pasaporte**
+3. **Licencia de Conducción** \
+La licencia de conducción determina el documento de identificación a presentar, si tiene una licencia de conducción
+colombiana, debe presentar su cédula colombiana (no se acepta pasaporte). Si tiene una licencia de conducción extranjera
+debe presentar su pasaporte, incluso si es colombiano residente en el exterior.
 
-**CONDICIONES**
+Verifique el cupo y la fecha de vencimiento de su tarjeta de crédito y la fecha de vencimiento de su licencia de conducción.
 
-**IMPORTANTE:** Tener en cuenta que cualquier cambio sobre su reserva puede incurrir en perder el
-descuento ya obtenido, por lo cual, quedaría sujeto a descuentos actuales.
+</div>
 
-**Antes de recoger el vehículo:**
+<div class="section">
 
-*Recuerde llevar en físico:*
+**CONDUCTOR ADICIONAL**
 
-- Tarjeta de crédito
-- Documento de identidad y licencia de conducción:
-  - *Colombiano residente en el extranjero*: pasaporte y licencia extranjera
-  - *Extranjero*: documento de extranjería o pasaporte y licencia extranjera
-  - *Colombiano residente en Colombia*: cédula colombiana y licencia de conducción colombiana
-- Presentarse 30 minutos antes o de forma puntual a la hora acordada.
-
-Verifique:
-
-- El cupo de su tarjeta de crédito.
-- La fecha de vencimiento de su tarjeta
-- La fecha de vencimiento de su licencia.
-
-**IMPORTANTE:** \
-**Conductor adicional:** \
 Si el vehículo será conducido por otra(s) persona(s) diferente(s) al titular del contrato, se debe
 cancelar en la agencia un cargo adicional de $ 12.000 pesos diarios por su seguro ya que se hace
-responsable del vehículo.
+responsable del vehículo. Los conductores adicionales y el titular de la tarjeta de crédito deben
+estar presentes para la firma de contratos.
+</div>
 
-- El Titular de la tarjeta de crédito y los conductores adicionales deben estar presentes para la firma
-de contratos.
-- Sólo se reciben pagos con tarjetas de crédito físicas, NO se aceptan pagos en efectivo ni otros
-medios de pago.
+<div class="section">
 
-**Durante la recogida del vehículo:**
+**DURANTE LA RECOGIDA DEL VEHÍCULO**
 
+- Elija el vehículo de su agrado según disponibilidad y gama seleccionada (tenga en cuenta la restricciones de movilidad de las zonas a transitar).
+- Verifique que el vehículo esté limpio y con el tanque lleno.
+- Realice un registro fotográfico del vehículo si lo considera necesario.
 - Puede adquirir o rechazar servicios adicionales según su necesidad como son: Seguro total, seguro
 de conductor adicional, entrega en otras sedes, lavada prepagada, silla de bebé y GPS (los 2 últimos
 bajo disponibilidad de la agencia).
-- Elija el vehículo de su agrado según disponibilidad y gama seleccionada.
 
-- **Verifique** que el vehículo esté limpio y con el tanque lleno.
-- Realice un registro fotográfico del vehículo si lo considera necesario.
+</div>
 
-**Durante el periodo de renta**
+<div class="section">
+
+**DURANTE EL PERIODO DE RENTA**
 
 - En caso de emergencia o asistencia en carretera comunícate de inmediato con las líneas de
 atención, las 24 horas del día, los 365 días del año. \
@@ -137,23 +122,37 @@ para evitar sobrecostos.
 - No puede ser usado para trabajos en aplicaciones de movilidad como uber, cafity o similares.
 - El vehículo no puede salir del país.
 
-**Antes de retornar el vehículo**
+</div>
+
+<div class="section">
+
+**ANTES DE RETORNAR EL VEHÍCULO**
 
 - Verifique que el tanque esté lleno y el vehículo limpio para evitar costos adicionales.
 - Verifique el interior del vehículo y no olvide sus artículos personales.
 
-**CONDICIONES DE ENTREGA Y RETORNO DEL VEHÍCULO**
+</div>
 
-**Importante tener presente:**
 
-- En caso de incluir el servicio de lavado al momento de solicitar la reserva, esta tiene un costo
-de $20.000 IVA incluido.
-- Si por el contrario el servicio se solicita al momento de retirar el vehículo en agencia o en la
-devolución, el valor a cancelar es de $30.000 IVA incluido.
-- Tendrá cobros adicionales solo en los casos en que lleve sus mascotas, el carro regrese con
-algún olor fuerte a cigarrillo o alcohol, o si ha conducido en condiciones adversas y se evidencie
-exceso de barro. Si este es su caso, le informo que la lavada tendrá un costo full con aspirada:
-$150.000 o full con aspirada y tapicería: $225.000.
+<div class="section">
+
+**LAVADO DE VEHÍCULO**
+
+El vehículo debe entregarse en las mismas condiciones de limpieza en que lo recibió.
+Contamos con el servicio de lavado al momento de hacer su reserva, el costo será de $20.000 IVA incluido.
+Si, por el contrario, solicita el servicio al momento de devolver el vehículo en la agencia, el valor a pagar será de $30.000 IVA incluido.
+
+Cabe destacar que se aplicarán cobros adicionales en los siguientes casos:
+
+Si transportó mascotas en el vehículo.
+Si el vehículo regresa con olor fuerte a cigarrillo o alcohol.
+Si condujo en condiciones adversas y se evidencia exceso de barro.
+En estos casos, el servicio de lavado tendrá un costo de:
+
+Lavado completo con aspirado: $150.000 IVA incluido.
+Lavado completo con aspirado y tapicería: $225.000 IVA incluido.
+
+</div>
 
 Apreciamos su paciencia y confianza en nuestros servicios.
 
