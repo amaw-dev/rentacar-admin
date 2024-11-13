@@ -27,8 +27,7 @@ class LocalizaReservationRequest extends Mailable implements ShouldQueue
         $toEmail = $this->reservation->email; // client email
         $bccEmail = config("localiza.reservationEmailAddress"); // car provider email
 
-        $this->to($toEmail);
-        $this->bcc($bccEmail);
+        $this->bcc([$toEmail, $bccEmail]);
         $this->subject("Solicitud de reserva en proceso");
     }
 
