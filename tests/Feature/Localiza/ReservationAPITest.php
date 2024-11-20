@@ -3,6 +3,7 @@
 namespace Tests\Feature\Localiza;
 
 use App\Enums\MonthlyMileage;
+use App\Jobs\SendPendingReservationNotificationJob;
 use App\Jobs\SendLocalizaReservationRequestJob;
 use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
 use App\Mail\ReservationClientNotification\Reserved\AlquilatucarroReservedReservationClientNotification;
@@ -16,6 +17,10 @@ use App\Mail\ReservationClientNotification\Pending\PendingReservationClientNotif
 use App\Mail\ReservationClientNotification\Pending\AlquilatucarroPendingReservationClientNotification;
 use App\Mail\ReservationClientNotification\Pending\AlquilamePendingReservationClientNotification;
 use App\Mail\ReservationClientNotification\Pending\AlquicarrosPendingReservationClientNotification;
+use App\Mail\ReservationPendingNotification\AlquilatucarroReservationPendingNotification;
+use App\Mail\ReservationPendingNotification\AlquilameReservationPendingNotification;
+use App\Mail\ReservationPendingNotification\AlquicarrosReservationPendingNotification;
+use App\Mail\ReservationPendingNotification\ReservationPendingNotification;
 use App\Mail\ReservationRequest\AlquilatucarroReservationRequest;
 use App\Mail\ReservationRequest\AlquilameReservationRequest;
 use App\Mail\ReservationRequest\AlquicarrosReservationRequest;
@@ -991,14 +996,14 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
 
-        Queue::assertPushed(SendLocalizaReservationRequestJob::class);
+        Queue::assertPushed(SendPendingReservationNotificationJob::class);
     }
 
     #[Group("reservation_api")]
     #[Group("client_reservation_notification")]
     #[Group("localiza")]
     #[Test]
-    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client()
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_and_localiza()
     {
         Http::preventStrayRequests();
         $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
@@ -1036,13 +1041,14 @@ class ReservationAPITest extends TestCase
         $this->assertNotNull($reservation);
 
         Mail::assertQueued(PendingReservationClientNotification::class);
+        Mail::assertQueued(ReservationPendingNotification::class);
     }
 
     #[Group("reservation_api")]
     #[Group("client_reservation_notification")]
     #[Group("localiza")]
     #[Test]
-    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_by_alquilatucarro()
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_and_localiza_by_alquilatucarro()
     {
         Http::preventStrayRequests();
         $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
@@ -1080,13 +1086,14 @@ class ReservationAPITest extends TestCase
         $this->assertNotNull($reservation);
 
         Mail::assertQueued(AlquilatucarroPendingReservationClientNotification::class);
+        Mail::assertQueued(AlquilatucarroReservationPendingNotification::class);
     }
 
     #[Group("reservation_api")]
     #[Group("client_reservation_notification")]
     #[Group("localiza")]
     #[Test]
-    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_by_alquilame()
+    public function when_a_reservation_is_pending_then_send_a_pending_notification_to_client_and_localiza_by_alquilame()
     {
         Http::preventStrayRequests();
         $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
@@ -1124,6 +1131,7 @@ class ReservationAPITest extends TestCase
         $this->assertNotNull($reservation);
 
         Mail::assertQueued(AlquilamePendingReservationClientNotification::class);
+        Mail::assertQueued(AlquilameReservationPendingNotification::class);
     }
 
     #[Group("reservation_api")]
@@ -1168,6 +1176,7 @@ class ReservationAPITest extends TestCase
         $this->assertNotNull($reservation);
 
         Mail::assertQueued(AlquicarrosPendingReservationClientNotification::class);
+        Mail::assertQueued(AlquicarrosReservationPendingNotification::class);
     }
 
     #[Group("reservation_api")]

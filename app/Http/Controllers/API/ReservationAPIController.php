@@ -13,6 +13,7 @@ use App\Enums\ReservationStatus;
 use App\Http\Requests\StoreReservationAPIRequest;
 use App\Jobs\SendClientReservationNotificationJob;
 use App\Jobs\SendLocalizaReservationRequestJob;
+use App\Jobs\SendPendingReservationNotificationJob;
 use App\Rentcar\Localiza\VehRes\LocalizaAPIVehRes;
 
 class ReservationAPIController extends Controller
@@ -71,8 +72,8 @@ class ReservationAPIController extends Controller
                     if($reservation->save()){
                         dispatch(new SendClientReservationNotificationJob($reservation));
                         if($reservationStatus === ReservationAPIStatus::Pending){
-                            // dispatch(new SendLocalizaReservationRequestJob($reservation)); // aditional notification to localiza to hurry them up
-                            // TODO pending to send a notification
+                            dispatch(new SendPendingReservationNotificationJob($reservation)); // aditional notification to localiza to hurry them up
+
                         }
                     }
 
