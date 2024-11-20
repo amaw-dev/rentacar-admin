@@ -114,12 +114,12 @@ class PreviewClientMailTest extends TestCase
                 ->where('category_description', '3 puertas')
                 ->where('category_image', 'http://localhost/storage/carcategories/car.png')
                 ->where('pickup_branch_name', 'Cali Aeropuerto')
-                ->where('pickup_branch_address', 'Carrera 1a # 1-1')
+                ->where('pickup_branch_address', '<a style="text-decoration:none; color:#000; cursor:default;" href="#" rel="nofollow noopener noreferer">Carrera 1a # 1-1</a>')
                 ->where('pickup_city', 'Cali')
                 ->where('pickup_date', $pickup_date_output)
                 ->where('pickup_hour', '09:00 am')
                 ->where('return_branch_name', 'Medellín Aeropuerto')
-                ->where('return_branch_address', 'Carrera 2a # 2-2')
+                ->where('return_branch_address', '<a style="text-decoration:none; color:#000; cursor:default;" href="#" rel="nofollow noopener noreferer">Carrera 2a # 2-2</a>')
                 ->where('return_city', 'Cali')
                 ->where('return_date', $return_date_output)
                 ->where('return_hour', '09:00 am')
@@ -490,8 +490,8 @@ class PreviewClientMailTest extends TestCase
         ->assertInertia(fn(Assert $page) => $page
             ->component('Reservations/EmailPreview')
             ->has('reservation', fn(Assert $page) => $page
-                ->where('pickup_branch_address', 'Carrera 1a # 1-1')
-                ->where('return_branch_address', 'Carrera 2a # 2-1')
+                ->where('pickup_branch_address', '<a style="text-decoration:none; color:#000; cursor:default;" href="#" rel="nofollow noopener noreferer">Carrera 1a # 1-1</a>')
+                ->where('return_branch_address', '<a style="text-decoration:none; color:#000; cursor:default;" href="#" rel="nofollow noopener noreferer">Carrera 2a # 2-1</a>')
                 ->etc()
             )
         );
