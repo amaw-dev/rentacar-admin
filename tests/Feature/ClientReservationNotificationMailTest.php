@@ -313,7 +313,7 @@ class ClientReservationNotificationMailTest extends TestCase
             'category'  => $this->category->id,
         ]);
 
-        $message = "Le informamos que su solicitud de reserva está en proceso";
+        $message = "Tu reserva está siendo procesada y pronto recibirás la confirmación por correo.";
 
         $mail = new AlquilatucarroPendingReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
@@ -345,7 +345,7 @@ class ClientReservationNotificationMailTest extends TestCase
             'category'  => $this->category->id,
         ]);
 
-        $message = "Lamentamos notificarte que la gama solicitada no se encuentra disponible para la fecha";
+        $message = "Lamentamos notificarle que la gama solicitada no se encuentra disponible para la ciudad y fecha solicitadas.";
 
         $mail = new AlquilatucarroFailedReservationClientNotification($reservation);
         $mail->assertSeeInHtml($message);
