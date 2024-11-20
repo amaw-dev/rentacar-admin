@@ -169,27 +169,6 @@ class VehAvail implements Arrayable {
     }
 
     /**
-     * get reference data
-     *
-     * @param SimpleXMLElement $rootEl root element of category
-     * @return array
-     */
-    private function getReference(): array {
-        $node = $this->node->xpath('.//A:Reference');
-        $result = [
-            'reference' => ""
-        ];
-
-        if(count($node) > 0){
-            $node = $node[0];
-            $result['reference'] = (string) $node->attributes()->ID;
-        }
-        else abort(new NoDataFoundException);
-
-        return $result;
-    }
-
-    /**
      * get coverage data
      *
      * @return array
@@ -253,6 +232,48 @@ class VehAvail implements Arrayable {
         if(count($node) > 0){
             $node = $node[0];
             $result['returnFeeAmount'] = $this->roundPrice($node->attributes()->Amount);
+        }
+
+        //TODO  convert to other currency
+
+        return $result;
+    }
+
+    /**
+     * get rate qualifier
+     *
+     * @return array
+     */
+    private function getRateQualifier(): array {
+        $node = $this->node->xpath('.//A:RateQualifier');
+        $result = [
+            'rateQualifier' => "",
+        ];
+
+        if(count($node) > 0){
+            $node = $node[0];
+            $result['rateQualifier'] = (string) $node->attributes()->RateQualifier;
+        }
+
+        //TODO  convert to other currency
+
+        return $result;
+    }
+
+    /**
+     * get reference token data
+     *
+     * @return array
+     */
+    private function getReferenceToken(): array {
+        $node = $this->node->xpath('.//A:Reference');
+        $result = [
+            'referenceToken' => "",
+        ];
+
+        if(count($node) > 0){
+            $node = $node[0];
+            $result['referenceToken'] = (string) $node->attributes()->ID;
         }
 
         //TODO  convert to other currency
@@ -385,6 +406,8 @@ class VehAvail implements Arrayable {
 
     }
 
+
+
     /**
      * get round price
      *
@@ -406,9 +429,10 @@ class VehAvail implements Arrayable {
             $this->getTaxFee(),
             $this->getIVAFee(),
             $this->getReturnFee(),
-            $this->getReference(),
             $this->getCoverage(),
             $this->getExtraHours(),
+            $this->getRateQualifier(),
+            $this->getReferenceToken(),
             $this->getTotalCoverageUnitCharge(),
             $this->getTotalAmountPlusTotalCoverage(),
             $this->getTaxFeeWithTotalCoverage(),

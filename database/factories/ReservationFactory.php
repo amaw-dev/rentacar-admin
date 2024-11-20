@@ -35,7 +35,7 @@ class ReservationFactory extends Factory
             'return_date'           =>  $this->faker->date('Y-m-d'),
             'pickup_hour'           =>  $this->faker->time('H:i'),
             'return_hour'           =>  $this->faker->time('H:i'),
-            'selected_days'         =>  $this->faker->numberBetween(1, 30),
+            'selected_days'         =>  $this->faker->numberBetween(1, 29),
             'extra_hours'           =>  $this->faker->numberBetween(0, 10),
             'extra_hours_price'     =>  $this->faker->randomNumber(6, true),
             'coverage_days'         =>  $this->faker->numberBetween(0, 10),
@@ -44,6 +44,7 @@ class ReservationFactory extends Factory
             'tax_fee'               =>  $this->faker->randomNumber(6, true),
             'iva_fee'               =>  $this->faker->randomNumber(6, true),
             'total_price'           =>  $this->faker->randomNumber(6, true),
+            'total_price_to_pay'    =>  $this->faker->randomNumber(6, true),
             'total_price_localiza'  =>  $this->faker->randomNumber(6, true),
             'franchise'             =>  Franchise::factory(),
             'user'                  =>  $this->faker->word,
@@ -51,7 +52,16 @@ class ReservationFactory extends Factory
             'status'                =>  ($this->faker->randomElement(ReservationStatus::class))->value,
             'monthly_mileage'       =>  ($this->faker->randomElement(MonthlyMileage::class))->value,
             'total_insurance'       =>  $this->faker->boolean(),
-            'created_at'            =>  $this->faker->dateTime()->format('Y-m-d H:i:s')
+            'created_at'            =>  $this->faker->dateTime()->format('Y-m-d H:i:s'),
         ];
+    }
+
+    public function withReservationRequirements(){
+        return $this->state(fn(array $attributes) =>
+            [
+                'rate_qualifier'        =>  $this->faker->randomNumber(6),
+                'reference_token'        =>  $this->faker->sha256(),
+            ]
+        );
     }
 }

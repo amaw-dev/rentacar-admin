@@ -3,11 +3,13 @@
 namespace App\Traits;
 
 use Illuminate\Support\Carbon;
+use Propaganistas\LaravelPhone\PhoneNumber;
 
 trait FormatTrait {
 
     public function moneyFormat($number){
         $fmt = numfmt_create( 'es_CO', \NumberFormatter::CURRENCY );
+        numfmt_set_attribute($fmt, \NumberFormatter::FRACTION_DIGITS, 0);
         return numfmt_format_currency($fmt, $number, "COP");
     }
 
@@ -34,6 +36,26 @@ trait FormatTrait {
             } catch (\Throwable $th) {
                 return Carbon::createFromFormat("H:i:s", $hour)->format("h:i a");
             }
+        }
+    }
+
+    public function phoneFormat($phone, $format = "international"){
+        try {
+            $phone_number = new PhoneNumber($phone);
+            if($phone_number){
+                $formatted_phone = match($format) {
+                    "international" => $phone_number->formatInternational(),
+                    "national" => $phone_number->formatNational(),
+                };
+
+       return $formatted_phone;
+            }
+            else return $phone;
+        } catch (\Throwable $th) {
+            return $phone;
+        }
+        finally {
+            return $phone;
         }
     }
 }
