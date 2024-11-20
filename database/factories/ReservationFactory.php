@@ -35,7 +35,7 @@ class ReservationFactory extends Factory
             'return_date'           =>  $this->faker->date('Y-m-d'),
             'pickup_hour'           =>  $this->faker->time('H:i'),
             'return_hour'           =>  $this->faker->time('H:i'),
-            'selected_days'         =>  $this->faker->numberBetween(1, 30),
+            'selected_days'         =>  $this->faker->numberBetween(1, 29),
             'extra_hours'           =>  $this->faker->numberBetween(0, 10),
             'extra_hours_price'     =>  $this->faker->randomNumber(6, true),
             'coverage_days'         =>  $this->faker->numberBetween(0, 10),
