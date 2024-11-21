@@ -53,7 +53,7 @@ class SendPendingReservationNotificationJob implements ShouldQueue
                 $franchiseEmail = $this->franchisesEmails[$franchise];
 
                 Mail::mailer($franchise)
-                ->later(now()->addHours(3), new $franchiseEmail($this->reservation));
+                ->send( new $franchiseEmail($this->reservation));
 
                 Log::info("An email was send to localiza board", $this->reservation->toArray());
             } catch (\Throwable $th) {
