@@ -10,7 +10,6 @@ class ReservationObserver
 {
     public array $triggerClientNotificationStatuses = [
         ReservationStatus::Reservado,
-        ReservationStatus::Pendiente,
         ReservationStatus::SinDisponibilidad,
     ];
 
