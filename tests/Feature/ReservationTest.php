@@ -1045,38 +1045,17 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
-    public function when_a_reservation_status_is_updated_trigger_a_client_reservation_notification(){
+    public function when_a_reservation_status_is_updated_from_pending_to_reserved_trigger_a_client_reservation_notification(){
         Queue::fake();
 
         $reservation = Reservation::factory()->create([
-            'status' => ReservationStatus::Reservado
+            'status' => ReservationStatus::Pendiente->value
         ]);
 
-        $reservation->status = ReservationStatus::Pendiente;
+        $reservation->status = ReservationStatus::Reservado->value;
         $reservation->save();
 
         Queue::assertPushed(SendClientReservationNotificationJob::class);
-
-    }
-
-    #[Group("reservation")]
-    #[Test]
-    public function when_change_a_reservation_status_to_pending_trigger_a_pending_reservation_notification(){
-        Mail::fake();
-
-        $franchise = Franchise::factory()->create([
-            'name'  => 'alquilatucarro'
-        ]);
-
-        $reservation = Reservation::factory()->create([
-            'status' => ReservationStatus::Reservado,
-            'franchise' =>  $franchise->id,
-        ]);
-
-        $reservation->status = ReservationStatus::Pendiente;
-        $reservation->save();
-
-        Mail::assertQueued(PendingReservationClientNotification::class);
 
     }
 
@@ -1090,11 +1069,11 @@ class ReservationTest extends TestCase
         ]);
 
         $reservation = Reservation::factory()->create([
-            'status' => ReservationStatus::Reservado,
+            'status' => ReservationStatus::Pendiente->value,
             'franchise' =>  $franchise->id,
         ]);
 
-        $reservation->status = ReservationStatus::SinDisponibilidad;
+        $reservation->status = ReservationStatus::SinDisponibilidad->value;
         $reservation->save();
 
         Mail::assertQueued(FailedReservationClientNotification::class);
@@ -1111,11 +1090,11 @@ class ReservationTest extends TestCase
         ]);
 
         $reservation = Reservation::factory()->create([
-            'status' => ReservationStatus::Pendiente,
+            'status' => ReservationStatus::Pendiente->value,
             'franchise' =>  $franchise->id,
         ]);
 
-        $reservation->status = ReservationStatus::Reservado;
+        $reservation->status = ReservationStatus::Reservado->value;
         $reservation->save();
 
         Mail::assertQueued(ReservedReservationClientNotification::class);
@@ -1128,7 +1107,7 @@ class ReservationTest extends TestCase
         Queue::fake();
 
         $reservation = Reservation::factory()->create([
-            'status' => ReservationStatus::Reservado
+            'status' => ReservationStatus::Reservado->value
         ]);
 
         $reservation->fullname = "test";
@@ -1136,6 +1115,58 @@ class ReservationTest extends TestCase
 
         Queue::assertNotPushed(SendClientReservationNotificationJob::class);
 
+    }
+
+    #[Group("reservation")]
+    #[Test]
+    public function update_a_reservation_status_from_pending_to_reserved_then_trigger_a_reserved_client_notification(){
+        Mail::fake();
+
+        $franchise = Franchise::factory()->create([
+            'name'  => 'alquilatucarro'
+        ]);
+
+        $reservation = Reservation::factory()->create([
+            'status' => ReservationStatus::Pendiente->value,
+            'franchise' =>  $franchise->id,
+        ]);
+        $reservationData = $reservation->toArray();
+        $reservationData['status'] = ReservationStatus::Reservado->value;
+
+        $response = $this
+            ->actingAs($this->user)
+            ->putJson(route('reservations.update', [
+                'reservation'   =>  $reservation->id,
+            ]), $reservationData);
+
+
+        Mail::assertQueued(ReservedReservationClientNotification::class);
+    }
+
+    #[Group("reservation")]
+    #[Test]
+    public function update_a_reservation_status_from_pending_to_failed_then_trigger_a_failed_client_notification(){
+        Mail::fake();
+
+        $franchise = Franchise::factory()->create([
+            'name'  => 'alquilatucarro'
+        ]);
+
+        $reservation = Reservation::factory()->create([
+            'status' => ReservationStatus::Pendiente->value,
+            'franchise' =>  $franchise->id,
+        ]);
+        $reservationData = $reservation->toArray();
+        $reservationData['status'] = ReservationStatus::SinDisponibilidad->value;
+
+        $response = $this
+            ->actingAs($this->user)
+            ->putJson(route('reservations.update', [
+                'reservation'   =>  $reservation->id,
+            ]), $reservationData);
+
+
+        Mail::assertQueued(FailedReservationClientNotification::class);
     }
 
 }
