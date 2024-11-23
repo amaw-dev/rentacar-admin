@@ -78,6 +78,9 @@ class CheckPendingReservationStatus extends Command
                 $reservation->status = ReservationStatus::Indeterminado->value;
                 $reservation->save();
 
+                Log::info("reserva indeterminada");
+                Log::info($th->__toString());
+
                 continue;
             }
 

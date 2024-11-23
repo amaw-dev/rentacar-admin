@@ -9,8 +9,8 @@ use App\Models\Reservation;
 class ReservationObserver
 {
     public array $triggerClientNotificationStatuses = [
-        ReservationStatus::Reservado,
-        ReservationStatus::SinDisponibilidad,
+        ReservationStatus::Reservado->value,
+        ReservationStatus::SinDisponibilidad->value,
     ];
 
     /**
