@@ -604,6 +604,29 @@ class ReservationTest extends TestCase
 
     #[Group("reservation")]
     #[Test]
+    public function when_trying_to_paginate_an_inexisting_page_go_to_first_page(){
+        $search = 'testing';
+        $reservations = Reservation::factory()
+            ->recycle(Branch::factory()->create())
+            ->count(15)
+            ->create();
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'), [
+                'page'      =>  3
+            ])
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',15)
+
+        );
+
+
+    }
+
+    #[Group("reservation")]
+    #[Test]
     public function allow_keep_the_page_when_paginate_and_go_to_other_page(){
         $search = 'testing';
         $reservations = Reservation::factory()

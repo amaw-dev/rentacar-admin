@@ -82,19 +82,26 @@ class DataRepository {
      */
     public function getPaginator()
     {
+        $totalItems = $this->query->get()->count();
+        $perPage = $this->filterManager->getFilter('perPage') ?? $this->perPage;
+        $totalPages = ceil($totalItems / $perPage);
+        $page = (int) $this->filterManager->getFilter('page') ?? 1;
+        $pageName = $this->pageName;
+        $columns = $this->columns;
+
         if($this->query instanceof EloquentBuilder){
             $paginator = $this->query->paginate(
-                $perPage = (int) $this->filterManager->getFilter('perPage') ?? $this->perPage,
-                $columns = $this->columns,
-                $pageName = $this->pageName,
-                $page = (int) $this->filterManager->getFilter('page') ?? 1
+                $perPage = $perPage,
+                $columns = $columns,
+                $pageName = $pageName,
+                $page = ($page > $totalPages) ? 1 : $page
             );
         }
         else if($this->query instanceof ScoutBuilder){
             $paginator = $this->query->paginate(
-                $perPage = (int) $this->filterManager->getFilter('perPage') ?? $this->perPage,
-                $pageName = $this->pageName,
-                $page = (int) $this->filterManager->getFilter('page') ?? 1
+                $perPage = $perPage,
+                $pageName = $pageName,
+                $page = ($page > $totalPages) ? 1 : $page
             );
         }
 
@@ -106,7 +113,7 @@ class DataRepository {
     /**
      * Get Eloquent query instance from query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder | Laravel\Scout\Builder
      */
     public function getQuery()
     {
@@ -254,8 +261,9 @@ class DataRepository {
                     $rawStartDate = $dateRange['start'];
                     $rawEndDate = $dateRange['end'];
 
-                    $startDate = Carbon::createFromFormat($this->defaultDateFormat, $rawStartDate);
-                    $endDate = Carbon::createFromFormat($this->defaultDateFormat, $rawEndDate);
+                    /** allow Carbon to parse the dates */
+                    $startDate = new Carbon($rawStartDate);
+                    $endDate = new Carbon($rawEndDate);
 
                     if($this->query instanceof ScoutBuilder){
                         $this->query = $this->query
