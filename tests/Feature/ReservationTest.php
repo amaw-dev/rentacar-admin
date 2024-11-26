@@ -261,7 +261,7 @@ class ReservationTest extends TestCase
                 ->component('Reservations/Index')
                 ->has('paginator.data.items',1)
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
-                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
+                    ->where('pickup_date',now()->locale('es')->isoFormat('ll'))
                     ->etc()
                 )
         );
@@ -293,7 +293,7 @@ class ReservationTest extends TestCase
                 ->component('Reservations/Index')
                 ->has('paginator.data.items',1)
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
-                    ->where('created_at',now()->format('Y-m-d H:i a'))
+                    ->where('created_at',now()->locale('es')->isoFormat('ll h:m a'))
                     ->etc()
                 )
         );
@@ -328,7 +328,7 @@ class ReservationTest extends TestCase
                 ->component('Reservations/Index')
                 ->has('paginator.data.items',1)
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
-                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
+                    ->where('pickup_date',now()->locale('es')->isoFormat('ll'))
                     ->where('fullname', 'testing')
                     ->etc()
                 )
@@ -410,7 +410,7 @@ class ReservationTest extends TestCase
                 ->has('paginator.data.items.0', fn(Assert $page) => $page
                     ->where('status',$status)
                     ->where('fullname',$name)
-                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
+                    ->where('pickup_date',now()->locale('es')->isoFormat('ll'))
                     ->etc()
                 )
         );
@@ -461,7 +461,7 @@ class ReservationTest extends TestCase
                     ->where('status',$status)
                     ->where('fullname',$name)
                     ->where('franchise',$franchise->name)
-                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
+                    ->where('pickup_date',now()->locale('es')->isoFormat('ll'))
                     ->etc()
                 )
         );
@@ -518,8 +518,8 @@ class ReservationTest extends TestCase
                     ->where('status',$status)
                     ->where('fullname',$name)
                     ->where('franchise',$franchise->name)
-                    ->where('pickup_date',now()->locale('es')->isoFormat('LL'))
-                    ->where('created_at',now()->format('Y-m-d H:i a'))
+                    ->where('pickup_date',now()->locale('es')->isoFormat('ll'))
+                    ->where('created_at',now()->locale('es')->isoFormat('ll h:m a'))
                     ->etc()
                 )
         );
@@ -605,6 +605,29 @@ class ReservationTest extends TestCase
                     ->etc()
                 )
         );
+
+    }
+
+    #[Group("reservation")]
+    #[Test]
+    public function when_trying_to_paginate_an_inexisting_page_go_to_first_page(){
+        $search = 'testing';
+        $reservations = Reservation::factory()
+            ->recycle(Branch::factory()->create())
+            ->count(15)
+            ->create();
+
+        $this
+            ->actingAs($this->user)
+            ->get(route('reservations.index'), [
+                'page'      =>  3
+            ])
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Reservations/Index')
+                ->has('paginator.data.items',15)
+
+        );
+
 
     }
 

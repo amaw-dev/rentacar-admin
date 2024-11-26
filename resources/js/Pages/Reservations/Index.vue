@@ -26,7 +26,7 @@
                   :options="reservationStatusOptions"
                   null-text="Estado"
                 />
-                <RentacarFilterDateRange field="created_At" placeholder="Creación" />
+                <RentacarFilterDateTimeRange field="created_at" placeholder="Creación" />
                 <RentacarFilterDateRange field="pickup_date" placeholder="Recogida" />
               </template>
             </RentacarFilterToolbar>
@@ -45,19 +45,24 @@
               <template #expand="item">
                 <Expand :item="item" />
               </template>
+              <template #item-fullname="{ fullname }">
+                <span class="short-text" :title="fullname" v-text="fullname"></span>
+              </template>
               <template #item-phone="{ phone, whatsapp_link }">
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-blue-500 hover:text-blue-800 cursor-pointer"
+                  class="text-blue-500 hover:text-blue-800 cursor-pointer short-text"
                   :href="whatsapp_link"
+                  :title="phone"
                   v-text="phone"
                 ></a>
               </template>
               <template #item-email="{ email }">
                 <a
-                  class="text-blue-500 hover:text-blue-800 cursor-pointer"
+                  class="text-blue-500 hover:text-blue-800 cursor-pointer short-text"
                   :href="'mailto:' + email"
+                  :title="email"
                   v-text="email"
                 ></a>
               </template>
@@ -94,6 +99,7 @@ import CreateButton from "@/Rentacar/Components/Buttons/CreateButton.vue";
 import EditItemButton from "@/Rentacar/Components/Buttons/EditItemButton.vue";
 import PreviewClientMailButton from "@/Rentacar/Components/Buttons/PreviewClientMailButton.vue";
 import RentacarFilterDateRange from "@/Rentacar/Components/Filters/FilterDateRange.vue";
+import RentacarFilterDateTimeRange from "@/Rentacar/Components/Filters/FilterDateTimeRange.vue";
 import RentacarFilterEnumerable from "@/Rentacar/Components/Filters/FilterEnumerable.vue";
 import RentacarFilterToolbar from "@/Rentacar/Components/FilterToolbar.vue";
 import RentacarList from "@/Rentacar/Components/List.vue";
