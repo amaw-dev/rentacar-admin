@@ -36,6 +36,12 @@ trait ReservationFormatTrait {
         );
     }
 
+    public function shortFormattedCategory(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->categoryObject->name ?? "",
+        );
+    }
+
     public function formattedPickupPlace(): Attribute {
         return Attribute::make(
             get: fn () => $this->formattedBranch($this->pickupLocation)
@@ -116,7 +122,7 @@ trait ReservationFormatTrait {
 
     public function shortFormattedPickupDate(): Attribute {
         return Attribute::make(
-            get: fn () => $this->dateFormat($this->pickup_date, output_format:"DD MMM YYYY")
+            get: fn () => $this->dateFormat($this->pickup_date, output_format:"ll")
         );
     }
 
@@ -128,7 +134,7 @@ trait ReservationFormatTrait {
 
     public function shortFormattedReturnDate(): Attribute {
         return Attribute::make(
-            get: fn () => $this->dateFormat($this->return_date, output_format:"DD MMM YYYY")
+            get: fn () => $this->dateFormat($this->return_date, output_format:"ll")
         );
     }
 
@@ -164,6 +170,18 @@ trait ReservationFormatTrait {
 
     private function formattedBranch(Branch|null $branch): string{
         return ($branch) ? "{$branch->name} - {$branch->code}" : "";
+    }
+
+    public function shortFormattedCreatedAt(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->dateFormat($this->created_at, output_format:"ll h:m a")
+        );
+    }
+
+    public function shortFormattedUpdatedAt(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->dateFormat($this->updated_at, output_format:"ll h:m a")
+        );
     }
 
 }

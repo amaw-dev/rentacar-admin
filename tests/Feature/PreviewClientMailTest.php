@@ -63,7 +63,7 @@ class PreviewClientMailTest extends TestCase
             'city_id'   => $city->id
         ]);
 
-        $output_date_format = 'DD MMM YYYY';
+        $output_date_format = 'll';
 
         $date_pickup = now()->addDay();
         $pickup_date = $date_pickup->format('Y-m-d');
