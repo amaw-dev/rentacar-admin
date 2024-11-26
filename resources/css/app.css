@@ -5,3 +5,11 @@
 [x-cloak] {
     display: none;
 }
+
+.short-text {
+    white-space: nowrap; /* Evita el salto de línea */
+    overflow: hidden;   /* Oculta el contenido que no cabe */
+    text-overflow: ellipsis; /* Añade los puntos suspensivos al final */
+    display: inline-block; /* Necesario para que el ancho funcione */
+    max-width: 100px; /* Ajusta el ancho máximo según tus necesidades */
+  }

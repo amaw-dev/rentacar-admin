@@ -45,19 +45,24 @@
               <template #expand="item">
                 <Expand :item="item" />
               </template>
+              <template #item-fullname="{ fullname }">
+                <span class="short-text" :title="fullname" v-text="fullname"></span>
+              </template>
               <template #item-phone="{ phone, whatsapp_link }">
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-blue-500 hover:text-blue-800 cursor-pointer"
+                  class="text-blue-500 hover:text-blue-800 cursor-pointer short-text"
                   :href="whatsapp_link"
+                  :title="phone"
                   v-text="phone"
                 ></a>
               </template>
               <template #item-email="{ email }">
                 <a
-                  class="text-blue-500 hover:text-blue-800 cursor-pointer"
+                  class="text-blue-500 hover:text-blue-800 cursor-pointer short-text"
                   :href="'mailto:' + email"
+                  :title="email"
                   v-text="email"
                 ></a>
               </template>
