@@ -1,19 +1,19 @@
 <template>
     <div class="w-auto">
         <Datepicker
-            id="filter-datetime-range"
-            v-model="datetime_range"
+            :id="`filter-datetime-range-${field}`"
+            v-model="dateRange"
             format="dd-MM-yyyy HH:mm"
-            modelType="yyyy-MM-dd HH:mm"
+            :modelType="format"
             locale="es"
             autoApply
             class="block mt-1 w-[450px]"
             autofocus
-            placeholder="Filtrar por rango de fecha"
-            :textInput="true"
-            :enableTimePicker="true"
-            :multiCalendars="true"
             :range="true"
+            :placeholder="placeholder"
+            :enableTimePicker="true"
+            :textInput="true"
+            :multiCalendars="true"
             :presetRanges="presetRanges"
             :textInputOptions="dateTextInputOptions"
             :startTime="startTime"
@@ -21,13 +21,13 @@
         <input
             v-if="filterStartDate"
             type="hidden"
-            name="filterStartDate"
+            :name="`filterDateRanges[${field}][start]`"
             :value="filterStartDate"
         />
         <input
             v-if="filterEndDate"
             type="hidden"
-            name="filterEndDate"
+            :name="`filterDateRanges[${field}][end]`"
             :value="filterEndDate"
         />
     </div>
@@ -48,10 +48,42 @@ import {
     subMonths,
 } from "date-fns";
 
-const previousStartDate = usePage().props?.elements?.meta?.filterStartDate;
-const previousEndDate = usePage().props?.elements?.meta?.filterEndDate;
 
-let datetime_range = ref([previousStartDate, previousEndDate]);
+
+const props = defineProps({
+    field: {
+        required: true,
+        type: String,
+    },
+    format: {
+        required: false,
+        type: String,
+        default: "yyyy-MM-dd HH:mm",
+    },
+    placeholder: {
+        required: false,
+        type: String,
+        default: "Filtrar por rango de fecha hora",
+    },
+    defaultStartDate: {
+        required: false,
+        type: String,
+    },
+    defaultEndDate: {
+        required: false,
+        type: String,
+    },
+});
+
+const defaultStartDate =
+    usePage().props.paginator.meta?.filterDateRanges?.[props.field]?.start ??
+    "";
+
+const defaultEndDate =
+    usePage().props.paginator.meta?.filterDateRanges?.[props.field]?.end ?? "";
+
+
+let dateRange = ref([defaultStartDate, defaultEndDate]);
 
 const presetRanges = ref([
     {
@@ -84,14 +116,14 @@ const startTime = ref([
     { hours: 23, minutes: 59 },
 ]);
 
-let filterStartDate = ref(previousStartDate);
-let filterEndDate = ref(previousEndDate);
+let filterStartDate = ref(defaultStartDate);
+let filterEndDate = ref(defaultEndDate);
 
 const dateTextInputOptions = {
     rangeSeparator: "~",
 };
 
-watch(datetime_range, (newDateRange) => {
+watch(dateRange, (newDateRange) => {
     filterStartDate.value = newDateRange?.[0];
     filterEndDate.value = newDateRange?.[1];
 });
