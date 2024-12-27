@@ -27,33 +27,17 @@ class DummyVehicleReserveController extends Controller
     }
 
     public function reservado(){
-        Http::preventStrayRequests();
-        Mail::fake();
-
-        $raw_xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml');
-
-        Http::fake([
-            '*' =>  Http::response($raw_xml, 200)
-        ]);
-
-        $localiza = new LocalizaAPIVehRes($this->payload);
-
-        return $localiza->getData();
+        return [
+            'reservationStatus' => 'Confirmado',
+            'reserveCode' => 'AVC123',
+        ];
     }
 
     public function pendiente(){
-        Http::preventStrayRequests();
-        Mail::fake();
-
-        $raw_xml = view('localiza.tests.responses.vehres.vehres-pending-xml');
-
-        Http::fake([
-            '*' =>  Http::response($raw_xml, 200)
-        ]);
-
-        $localiza = new LocalizaAPIVehRes($this->payload);
-
-        return $localiza->getData();
+        return [
+            'reservationStatus' => 'Pendiente',
+            'reserveCode' => 'AVC123',
+        ];
     }
 
     public function error_desconocido(){
