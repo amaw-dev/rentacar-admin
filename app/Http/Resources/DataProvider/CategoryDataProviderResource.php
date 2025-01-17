@@ -49,8 +49,8 @@ class CategoryDataProviderResource extends JsonResource
         $totalCoveragePriceLowGamma = (int) config('localiza.totalCoveragePriceLowGamma');
         $totalCoveragePriceHighGamma = (int) config('localiza.totalCoveragePriceHighGamma');
 
-        $totalCoverageLowGammaCategories = ['C', 'F', 'FX'];
-        $totalCoverageHighGammaCategories = ['GC', 'G4', 'LE'];
+        $totalCoverageLowGammaCategories = ['C', 'F', 'FX', 'FU', 'FL'];
+        $totalCoverageHighGammaCategories = ['GC', 'G4', 'LE', 'GL', 'GR', 'VP'];
 
         if(in_array($category, $totalCoverageHighGammaCategories))
             return $totalCoveragePriceHighGamma;
