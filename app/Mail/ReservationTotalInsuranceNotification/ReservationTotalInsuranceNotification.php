@@ -16,6 +16,8 @@ class ReservationTotalInsuranceNotification extends Mailable implements ShouldQu
 
     public $reservation;
     public $markdown = 'mail.total_insurance_notification.total-insurance-notification';
+    public $emailFromConfig = "";
+    public $emailFromName = "Rentacar";
 
     /**
      * Create a new message instance.
@@ -23,10 +25,12 @@ class ReservationTotalInsuranceNotification extends Mailable implements ShouldQu
     public function __construct(Reservation $reservation)
     {
         $this->reservation = $reservation;
+        $email = config($this->emailFromConfig);
 
         $toEmail = config('localiza.reservationEmailAddress');
 
         $this->to($toEmail);
+        $this->from($email, $this->emailFromName);
     }
 
     /**

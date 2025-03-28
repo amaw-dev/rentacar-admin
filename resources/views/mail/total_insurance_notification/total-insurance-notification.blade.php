@@ -2,7 +2,7 @@
 
 Cordial saludo, Señores Localiza
 
-Contamos con una solicitud de reserva enviada recientemente, con código **{{ $reserve_code }}**  en estado pendiente.
+Contamos con una solicitud de reserva enviada recientemente, con código **{{ $reserve_code }}**.
 
 @if ($total_insurance)
     El cliente requiere seguro total

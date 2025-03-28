@@ -14,6 +14,7 @@ use App\Http\Requests\StoreReservationAPIRequest;
 use App\Jobs\SendClientReservationNotificationJob;
 use App\Jobs\SendLocalizaReservationRequestJob;
 use App\Jobs\SendPendingReservationNotificationJob;
+use App\Jobs\SendLocalizaTotalInsuranceReservationNotificationJob;
 use App\Rentcar\Localiza\VehRes\LocalizaAPIVehRes;
 
 class ReservationAPIController extends Controller
@@ -73,7 +74,9 @@ class ReservationAPIController extends Controller
                         dispatch(new SendClientReservationNotificationJob($reservation));
                         if($reservationStatus === ReservationAPIStatus::Pending){
                             dispatch(new SendPendingReservationNotificationJob($reservation)); // aditional notification to localiza to hurry them up
-
+                        }
+                        else if($reservation->total_insurance){
+                            dispatch(new SendLocalizaTotalInsuranceReservationNotificationJob($reservation));
                         }
                     }
 
