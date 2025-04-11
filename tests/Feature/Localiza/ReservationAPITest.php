@@ -28,6 +28,7 @@ use App\Mail\ReservationTotalInsuranceNotification\AlquicarrosReservationTotalIn
 use App\Mail\ReservationRequest\AlquilatucarroReservationRequest;
 use App\Mail\ReservationRequest\AlquilameReservationRequest;
 use App\Mail\ReservationRequest\AlquicarrosReservationRequest;
+use App\Mail\ReservationRequest\ReservationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -1887,5 +1888,51 @@ class ReservationAPITest extends TestCase
         });
     }
 
+    #[Group("reservation_api")]
+    #[Group("client_reservation_notification")]
+    #[Group("monthly_reservation")]
+    #[Group("localiza")]
+    #[Test]
+    public function create_a_monthly_reservation()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-pending-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilatucarro'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->make([
+            'selected_days' => 30,
+        ]);
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+        $response->assertJson([
+            'reserveCode' => 'Pendiente',
+            'reservationStatus' => 'Pendiente',
+        ]);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+
+        Mail::assertQueued(AlquilatucarroReservationRequest::class);
+    }
 
 }
