@@ -43,6 +43,9 @@ class UpdateReservationRequest extends StoreReservationRequest
             'total_insurance' => ['nullable', 'boolean'],
             'note' => ['nullable', 'string'],
             'total_price_to_pay'   =>  ['required','numeric'],
+            'extra_driver' => ['nullable', 'boolean'],
+            'baby_seat' => ['nullable', 'boolean'],
+            'wash' => ['nullable', 'boolean'],
         ];
     }
 }

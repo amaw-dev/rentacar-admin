@@ -52,6 +52,9 @@ class StoreReservationRequest extends FormRequest
             'total_insurance' => ['nullable', 'boolean'],
             'note' => ['nullable', 'string'],
             'total_price_to_pay'   =>  ['required','numeric'],
+            'extra_driver' => ['nullable', 'boolean'],
+            'baby_seat' => ['nullable', 'boolean'],
+            'wash' => ['nullable', 'boolean'],
         ];
     }
 
@@ -93,6 +96,9 @@ class StoreReservationRequest extends FormRequest
             'monthly_mileage' => 'Kilometraje',
             'total_insurance' => 'Seguro total',
             'note' => 'Nota',
+            'extra_driver' => "Conductor adicional",
+            'baby_seat' => "Silla de bebé",
+            'wash' => "Lavado del vehículo",
         ];
     }
 }
