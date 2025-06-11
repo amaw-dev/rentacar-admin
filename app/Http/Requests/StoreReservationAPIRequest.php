@@ -59,6 +59,9 @@ class StoreReservationAPIRequest extends FormRequest
             'total_price_to_pay'   =>  ['required','numeric'],
             'rate_qualifier'   =>  ['required_unless:selected_days,30'],
             'reference_token'   =>  ['required_unless:selected_days,30'],
+            'extra_driver' => ['nullable', 'boolean'],
+            'baby_seat' => ['nullable', 'boolean'],
+            'wash' => ['nullable', 'boolean'],
         ];
     }
 

@@ -213,6 +213,31 @@
         </div>
       </FormField>
       <FormField>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="flex flex-col">
+            <CheckboxInputFormField
+              field="extra_driver"
+              name="Conductor adicional"
+              :form="form"
+            />
+          </div>
+          <div class="flex flex-col">
+            <CheckboxInputFormField
+              field="baby_seat"
+              name="Silla bebé"
+              :form="form"
+            />
+          </div>
+          <div class="flex flex-col">
+            <CheckboxInputFormField
+              field="wash"
+              name="Lavado"
+              :form="form"
+            />
+          </div>
+        </div>
+      </FormField>
+      <FormField>
         <TextareaInputFormField
             field="note"
             name="Nota"
