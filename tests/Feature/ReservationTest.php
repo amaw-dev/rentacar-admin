@@ -1339,4 +1339,46 @@ class ReservationTest extends TestCase
         Mail::assertQueued(FailedReservationClientNotification::class);
     }
 
+    #[Group("reservation")]
+    #[Group("flight")]
+    #[Test]
+    public function create_a_reservation_with_flight_info(){
+        $reservationData = Reservation::factory()->make()->toArray();
+        $reservationData['flight'] = true;
+        $reservationData['aeroline'] = 'test';
+        $reservationData['flight_number'] = 'test';
+
+        $response = $this
+            ->actingAs($this->user)
+            ->postJson(route('reservations.store'), $reservationData);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservationData['fullname'], $reservation->fullname);
+        $this->assertEquals($reservationData['flight'], $reservation->flight);
+        $this->assertEquals($reservationData['aeroline'], $reservation->aeroline);
+        $this->assertEquals($reservationData['flight_number'], $reservation->flight_number);
+    }
+
+    #[Group("reservation")]
+    #[Group("flight")]
+    #[Test]
+    public function create_a_reservation_with_null_flight_info(){
+        $reservationData = Reservation::factory()->make()->toArray();
+        $reservationData['flight'] = null;
+        $reservationData['aeroline'] = null;
+        $reservationData['flight_number'] = null;
+
+        $response = $this
+            ->actingAs($this->user)
+            ->postJson(route('reservations.store'), $reservationData);
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservationData['fullname'], $reservation->fullname);
+        $this->assertEquals($reservationData['flight'], $reservation->flight);
+        $this->assertEquals($reservationData['aeroline'], $reservation->aeroline);
+        $this->assertEquals($reservationData['flight_number'], $reservation->flight_number);
+    }
+
 }

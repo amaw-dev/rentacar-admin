@@ -46,6 +46,9 @@ class UpdateReservationRequest extends StoreReservationRequest
             'extra_driver' => ['nullable', 'boolean'],
             'baby_seat' => ['nullable', 'boolean'],
             'wash' => ['nullable', 'boolean'],
+            'flight'   =>  ['nullable',"boolean"],
+            'aeroline'   =>  ['nullable',"string"],
+            'flight_number'   =>  ['nullable',"string"],
         ];
     }
 }

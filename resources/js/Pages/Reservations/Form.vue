@@ -238,6 +238,23 @@
         </div>
       </FormField>
       <FormField>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="flex flex-col">
+            <CheckboxInputFormField
+              field="flight"
+              name="Vuelo"
+              :form="form"
+            />
+          </div>
+          <div class="flex flex-col">
+            <InputFormField field="aeroline" name="Aerolínea" :form="form" />
+          </div>
+          <div class="flex flex-col">
+            <InputFormField field="flight_number" name="Número de vuelo" :form="form" />
+          </div>
+        </div>
+      </FormField>
+      <FormField>
         <TextareaInputFormField
             field="note"
             name="Nota"

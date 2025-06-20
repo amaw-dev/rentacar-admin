@@ -55,6 +55,9 @@ class StoreReservationRequest extends FormRequest
             'extra_driver' => ['nullable', 'boolean'],
             'baby_seat' => ['nullable', 'boolean'],
             'wash' => ['nullable', 'boolean'],
+            'flight'   =>  ['nullable',"boolean"],
+            'aeroline'   =>  ['nullable',"string"],
+            'flight_number'   =>  ['nullable',"string"],
         ];
     }
 
@@ -99,6 +102,9 @@ class StoreReservationRequest extends FormRequest
             'extra_driver' => "Conductor adicional",
             'baby_seat' => "Silla de bebé",
             'wash' => "Lavado del vehículo",
+            'flight' => "Vuelo",
+            'aeroline' => "Aerolínea",
+            'flight_number' => "Número de vuelo",
         ];
     }
 }

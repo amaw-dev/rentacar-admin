@@ -1937,4 +1937,48 @@ class ReservationAPITest extends TestCase
         Mail::assertQueued(AlquilatucarroReservationRequest::class);
     }
 
+    #[Group("reservation_api")]
+    #[Group("localiza")]
+    #[Group("flight")]
+    #[Test]
+    public function store_a_default_reservation_with_flight_info()
+    {
+        Http::preventStrayRequests();
+        $xml = view('localiza.tests.responses.vehres.vehres-confirmed-xml')->render();
+        Http::fake([
+            '*' =>  Http::response($xml, 200)
+        ]);
+
+        $pickupLocation = Branch::factory()->create([
+            'code'  =>  'AABOT'
+        ]);
+        $returnLocation = Branch::factory()->create([
+            'code'  =>  'AAMED'
+        ]);
+        $franchise = Franchise::factory()->create([
+            'name'  =>  'alquilame'
+        ]);
+        $category = Category::factory()->create([
+            'identification'  =>  'FX'
+        ]);
+
+        $reservationData = Reservation::factory()->withReservationRequirements()->make();
+        $reservationData['franchise'] = $franchise->name;
+        $reservationData['pickup_location'] = $pickupLocation->code;
+        $reservationData['return_location'] = $returnLocation->code;
+        $reservationData['category'] = $category->identification;
+        $reservationData['flight'] = true;
+        $reservationData['aeroline'] = 'test';
+        $reservationData['flight_number'] = 'test';
+
+        $response = $this->post(route('reserve.store'), $reservationData->toArray());
+        $response->assertOk();
+
+        $reservation = Reservation::first();
+        $this->assertNotNull($reservation);
+        $this->assertEquals($reservation->aeroline, 'test');
+        $this->assertEquals($reservation->flight_number, 'test');
+
+    }
+
 }
