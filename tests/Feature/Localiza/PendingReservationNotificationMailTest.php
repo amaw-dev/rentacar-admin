@@ -124,6 +124,81 @@ class PendingReservationNotificationMailTest extends TestCase
         $mail->assertSeeInText($total_insurance_message);
     }
 
+    #[Group("pending_reservation_notification")]
+    #[Test]
+    public function mention_when_a_pending_reservation_has_extra_services_by_alquilatucarros(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => true,
+            'baby_seat' => true,
+            'wash' => true,
+        ]);
+
+        $extra_services_text = "El cliente requiere los servicios de:";
+        $extra_driver_text = "Conductor adicional";
+        $baby_seat_text = "Silla para bebé";
+        $wash_text = "Lavado de vehículo";
+
+        $mail = new AlquilatucarroReservationPendingNotification($reservation);
+        $mail->assertSeeInHtml($extra_services_text);
+        $mail->assertSeeInText($extra_services_text);
+        $mail->assertSeeInHtml($extra_driver_text);
+        $mail->assertSeeInText($extra_driver_text);
+        $mail->assertSeeInHtml($baby_seat_text);
+        $mail->assertSeeInText($baby_seat_text);
+        $mail->assertSeeInHtml($wash_text);
+        $mail->assertSeeInText($wash_text);
+    }
+
+    #[Group("pending_reservation_notification")]
+    #[Test]
+    public function mention_when_a_pending_reservation_has_extra_services_by_alquilame(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => true,
+            'baby_seat' => true,
+            'wash' => true,
+        ]);
+
+        $extra_services_text = "El cliente requiere los servicios de:";
+        $extra_driver_text = "Conductor adicional";
+        $baby_seat_text = "Silla para bebé";
+        $wash_text = "Lavado de vehículo";
+
+        $mail = new AlquilameReservationPendingNotification($reservation);
+        $mail->assertSeeInHtml($extra_services_text);
+        $mail->assertSeeInText($extra_services_text);
+        $mail->assertSeeInHtml($extra_driver_text);
+        $mail->assertSeeInText($extra_driver_text);
+        $mail->assertSeeInHtml($baby_seat_text);
+        $mail->assertSeeInText($baby_seat_text);
+        $mail->assertSeeInHtml($wash_text);
+        $mail->assertSeeInText($wash_text);
+    }
+
+    #[Group("pending_reservation_notification")]
+    #[Test]
+    public function mention_when_a_pending_reservation_has_extra_services_by_alquicarros(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => true,
+            'baby_seat' => true,
+            'wash' => true,
+        ]);
+
+        $extra_services_text = "El cliente requiere los servicios de:";
+        $extra_driver_text = "Conductor adicional";
+        $baby_seat_text = "Silla para bebé";
+        $wash_text = "Lavado de vehículo";
+
+        $mail = new AlquicarrosReservationPendingNotification($reservation);
+        $mail->assertSeeInHtml($extra_services_text);
+        $mail->assertSeeInText($extra_services_text);
+        $mail->assertSeeInHtml($extra_driver_text);
+        $mail->assertSeeInText($extra_driver_text);
+        $mail->assertSeeInHtml($baby_seat_text);
+        $mail->assertSeeInText($baby_seat_text);
+        $mail->assertSeeInHtml($wash_text);
+        $mail->assertSeeInText($wash_text);
+    }
+
     #[Group("client_reservation_notification")]
     #[Test]
     public function testing_email(): void {

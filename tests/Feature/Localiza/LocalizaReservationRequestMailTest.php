@@ -200,4 +200,207 @@ class LocalizaReservationRequestMailTest extends TestCase
         $mail->assertDontSeeInHtml("El cliente requiere seguro total");
         $mail->assertDontSeeInText("El cliente requiere seguro total");
     }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_extra_driver(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => true
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_no_extra_driver(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => false
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Conductor adicional");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Conductor adicional");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Conductor adicional");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Conductor adicional");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Conductor adicional");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Conductor adicional");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_baby_seat(): void {
+        $reservation = Reservation::factory()->create([
+            'baby_seat' => true
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Silla para bebé");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Silla para bebé");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Silla para bebé");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_no_baby_seat(): void {
+        $reservation = Reservation::factory()->create([
+            'baby_seat' => false
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Silla para bebé");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Silla para bebé");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Silla para bebé");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Silla para bebé");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Silla para bebé");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Silla para bebé");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_wash(): void {
+        $reservation = Reservation::factory()->create([
+            'wash' => true
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Lavado de vehículo");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Lavado de vehículo");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Lavado de vehículo");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_no_wash(): void {
+        $reservation = Reservation::factory()->create([
+            'wash' => false
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Lavado de vehículo");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Lavado de vehículo");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Lavado de vehículo");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Lavado de vehículo");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertDontSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInHtml("Lavado de vehículo");
+        $mail->assertDontSeeInText("El cliente requiere los servicios de:");
+        $mail->assertDontSeeInText("Lavado de vehículo");
+    }
+
+    #[Group("localiza_reservation_request")]
+    #[Group("localiza")]
+    #[Test]
+    public function render_email_where_theres_extra_driver_and_baby_seat_and_wash(): void {
+        $reservation = Reservation::factory()->create([
+            'extra_driver' => true,
+            'baby_seat' => true,
+            'wash' => true,
+        ]);
+
+        $mail = new AlquilatucarroReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+        $mail->assertSeeInText("Silla para bebé");
+        $mail->assertSeeInText("Lavado de vehículo");
+
+        $mail = new AlquilameReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+        $mail->assertSeeInText("Silla para bebé");
+        $mail->assertSeeInText("Lavado de vehículo");
+
+        $mail = new AlquicarrosReservationRequest($reservation);
+        $mail->assertSeeInHtml("El cliente requiere los servicios de:");
+        $mail->assertSeeInHtml("Conductor adicional");
+        $mail->assertSeeInHtml("Silla para bebé");
+        $mail->assertSeeInHtml("Lavado de vehículo");
+        $mail->assertSeeInText("El cliente requiere los servicios de:");
+        $mail->assertSeeInText("Conductor adicional");
+        $mail->assertSeeInText("Silla para bebé");
+        $mail->assertSeeInText("Lavado de vehículo");
+    }
 }

@@ -47,8 +47,7 @@ class ReservationPendingNotification extends Mailable implements ShouldQueue
         return new Content(
             markdown: $this->markdown,
             with: [
-                'reserve_code'  => $this->reservation->reserve_code,
-                'total_insurance' => $this->reservation->total_insurance,
+                'reserva'   => $this->reservation,
             ]
         );
     }

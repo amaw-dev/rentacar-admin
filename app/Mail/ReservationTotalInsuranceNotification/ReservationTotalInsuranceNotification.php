@@ -51,7 +51,7 @@ class ReservationTotalInsuranceNotification extends Mailable implements ShouldQu
         return new Content(
             markdown: $this->markdown,
             with: [
-                'reserve_code'  => $this->reservation->reserve_code,
+                'reserva'  => $this->reservation,
             ]
         );
     }

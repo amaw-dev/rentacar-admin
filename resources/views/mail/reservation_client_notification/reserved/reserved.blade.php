@@ -68,6 +68,28 @@ Realizar una nueva reserva no garantiza obtener los descuentos de una reserva pr
 </div>
 
 <div class="section">
+@if ($reserva->total_insurance)
+Ha seleccionado seguro total
+@endif
+
+@if ($reserva->extra_driver || $reserva->baby_seat || $reserva->wash)
+Ha seleccionado los servicios de:
+@endif
+
+@if ($reserva->extra_driver)
+* Conductor adicional
+@endif
+
+@if ($reserva->baby_seat)
+* Silla para bebé
+@endif
+
+@if ($reserva->wash)
+* Lavado de vehículo
+@endif
+</div>
+
+<div class="section">
 
 **ANTES DE RECOGER EL VEHÍCULO**
 

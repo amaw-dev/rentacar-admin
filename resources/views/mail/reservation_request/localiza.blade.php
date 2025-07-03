@@ -35,6 +35,22 @@ El cliente requiere seguro total
 El cliente ha seleccionado el kilometraje: {{ $reserva->monthly_mileage }}
 @endif
 
+@if ($reserva->extra_driver || $reserva->baby_seat || $reserva->wash)
+El cliente requiere los servicios de:
+@endif
+
+@if ($reserva->extra_driver)
+* Conductor adicional
+@endif
+
+@if ($reserva->baby_seat)
+* Silla para bebé
+@endif
+
+@if ($reserva->wash)
+* Lavado de vehículo
+@endif
+
 ---
 <br/>
 
