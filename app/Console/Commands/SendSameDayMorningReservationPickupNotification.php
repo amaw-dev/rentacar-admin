@@ -45,12 +45,14 @@ class SendSameDayMorningReservationPickupNotification extends Command
         ->where('status', ReservationStatus::Reservado)
         ->get()
         ->each(function ($reservation) use ($watiApi) {
-                $franchise = $reservation->franchiseObject->name;
+                $franchiseName = $reservation->franchiseObject->name;
+                $franchiseWeb = config('rentacar.' . strtolower($franchiseName) . '.website' );
+                $franchisePhone = config('rentacar.' . strtolower($franchiseName) . '.phone' );
                 $reservationCode = $reservation->reserve_code;
                 $whatsappNumber = $reservation->phone;
                 $userName = $reservation->fullname;
-                $templateName = 'aviso_recogida_vehiculo_mismo_dia';
-                $broadcastName = 'Notificación de Recogida de Vehículo';
+                $templateName = 'recordatorio_alquiler_carro';
+                $broadcastName = 'Recordatorio de Recogida de Vehículo';
                 $parameters = [
                     [
                         'name' => 'fullname',
@@ -69,9 +71,21 @@ class SendSameDayMorningReservationPickupNotification extends Command
                         'value' => $reservation->pickup_hour->format('H:i a'),
                     ],
                     [
-                        'name' => 'franchise',
-                        'value' => $franchise,
-                    ]
+                        'name' => 'pickup_location',
+                        'value' => $reservation->pickupLocation->name,
+                    ],
+                    [
+                        'name' => 'franchise_name',
+                        'value' => $franchiseName,
+                    ],
+                    [
+                        'name' => 'franchise_web',
+                        'value' => $franchiseWeb,
+                    ],
+                    [
+                        'name' => 'franchise_phone',
+                        'value' => $franchisePhone,
+                    ],
 
                 ];
                 $sameDayMorningBaseLog = "Same Day Morning Pickup Notification:";
