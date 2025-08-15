@@ -17,10 +17,9 @@ Schedule::command('model:prune')->daily();
 
 Schedule::command(CheckPendingReservationStatus::class)->everyThirtyMinutes();
 
+// wati commands
 $wati_endpoint = config('wati.endpoint');
-Schedule::group(function() use ($wati_endpoint) {
-        Schedule::command(SendSameDayMorningReservationPickupNotification::class)->dailyAt('08:00')->pingBefore($wati_endpoint);
-        Schedule::command(SendSameDayLateReservationPickupNotification::class)->dailyAt('20:00')->pingBefore($wati_endpoint);
-        Schedule::command(SendThreeDaysReservationPickupNotification::class)->dailyAt('09:00')->pingBefore($wati_endpoint);
-        Schedule::command(SendWeekReservationPickupNotification::class)->dailyAt('10:00')->pingBefore($wati_endpoint);
-    });
+Schedule::command(SendSameDayMorningReservationPickupNotification::class)->dailyAt('08:00')->pingBefore($wati_endpoint);
+Schedule::command(SendSameDayLateReservationPickupNotification::class)->dailyAt('20:00')->pingBefore($wati_endpoint);
+Schedule::command(SendThreeDaysReservationPickupNotification::class)->dailyAt('09:00')->pingBefore($wati_endpoint);
+Schedule::command(SendWeekReservationPickupNotification::class)->dailyAt('10:00')->pingBefore($wati_endpoint);
