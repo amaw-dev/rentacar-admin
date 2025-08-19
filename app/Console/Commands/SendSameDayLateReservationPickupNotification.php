@@ -51,7 +51,7 @@ class SendSameDayLateReservationPickupNotification extends Command
                 $reservationCode = $reservation->reserve_code;
                 $whatsappNumber = $reservation->phone;
                 $userName = $reservation->fullname;
-                $templateName = 'recordatorio_alquiler_carro';
+                $templateName = 'recordatorio_recogida_mismo_dia';
                 $broadcastName = 'Recordatorio de Recogida de Vehículo';
                 $parameters = [
                     [
@@ -77,14 +77,6 @@ class SendSameDayLateReservationPickupNotification extends Command
                     [
                         'name' => 'franchise_name',
                         'value' => $franchiseName,
-                    ],
-                    [
-                        'name' => 'franchise_web',
-                        'value' => $franchiseWeb,
-                    ],
-                    [
-                        'name' => 'franchise_phone',
-                        'value' => $franchisePhone,
                     ],
 
                 ];

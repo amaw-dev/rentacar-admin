@@ -44,7 +44,7 @@ class SendThreeDaysReservationPickupNotification extends Command
                 $reservationCode = $reservation->reserve_code;
                 $whatsappNumber = $reservation->phone;
                 $userName = $reservation->fullname;
-                $templateName = 'confirmacion_alquiler_carro';
+                $templateName = 'recordatorio_recogida';
                 $broadcastName = 'Confirmación de Recogida de Vehículo';
                 $parameters = [
                     [
@@ -70,14 +70,6 @@ class SendThreeDaysReservationPickupNotification extends Command
                     [
                         'name' => 'franchise_name',
                         'value' => $franchiseName,
-                    ],
-                    [
-                        'name' => 'franchise_web',
-                        'value' => $franchiseWeb,
-                    ],
-                    [
-                        'name' => 'franchise_phone',
-                        'value' => $franchisePhone,
                     ],
 
                 ];
