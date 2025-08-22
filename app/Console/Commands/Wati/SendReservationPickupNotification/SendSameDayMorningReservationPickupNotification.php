@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\SendSameDayLateReservation;
+namespace App\Console\Commands\Wati\SendReservationPickupNotification;
 
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Reservation;
