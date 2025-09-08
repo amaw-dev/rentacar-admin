@@ -43,7 +43,7 @@ class SendLatePostReservationPickupNotification extends SendPostReservationPicku
 
     protected function getTemplateName(): string
     {
-        return 'post_recordatorio_recogida';
+        return 'post_reserva';
     }
 
     protected function getBaseBroadcastName(): string

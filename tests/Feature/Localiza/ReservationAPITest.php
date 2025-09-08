@@ -3,8 +3,11 @@
 namespace Tests\Feature\Localiza;
 
 use App\Enums\MonthlyMileage;
-use App\Jobs\SendPendingReservationNotificationJob;
-use App\Jobs\SendLocalizaReservationRequestJob;
+// use App\Jobs\SendPendingReservationNotificationJob;
+// use App\Jobs\SendLocalizaReservationRequestJob;
+use App\Events\NewReservationEvent;
+use App\Listeners\SendClientReservationNotification\SendClientReservationNotificationListener;
+use App\Listeners\SendPendingReservationNotification\SendPendingReservationMailNotificationListener;
 use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
 use App\Mail\ReservationClientNotification\Reserved\AlquilatucarroReservedReservationClientNotification;
 use App\Mail\ReservationClientNotification\Reserved\AlquilameReservedReservationClientNotification;
@@ -32,6 +35,7 @@ use App\Mail\ReservationRequest\ReservationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Group;
@@ -43,6 +47,10 @@ use App\Models\Franchise;
 use App\Models\Reservation;
 use App\Models\Category;
 
+use Mockery;
+use App\Providers\WatiServiceProvider;
+use Mockery\MockInterface;
+
 class ReservationAPITest extends TestCase
 {
     use RefreshDatabase;
@@ -52,9 +60,23 @@ class ReservationAPITest extends TestCase
     {
         parent::setUp();
 
-
-
         Mail::fake();
+
+        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
+            $mock->shouldReceive('addContact')
+            ->andReturn(['result' => true]);
+
+            $mock->shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
+
+            $mock->shouldReceive('sendTemplateMessage')
+            ->andReturn(['result' => true]);
+
+            return $mock;
+        });
+
+        $this->app->instance('wati', $watiMock);
+
 
     }
 
@@ -1013,7 +1035,7 @@ class ReservationAPITest extends TestCase
         Http::fake([
             '*' =>  Http::response($xml, 200)
         ]);
-        Queue::fake();
+        Event::fake();
 
         $pickupLocation = Branch::factory()->create([
             'code'  =>  'AABOT'
@@ -1044,7 +1066,11 @@ class ReservationAPITest extends TestCase
         $reservation = Reservation::first();
         $this->assertNotNull($reservation);
 
-        Queue::assertPushed(SendPendingReservationNotificationJob::class);
+        Event::assertListening(
+            NewReservationEvent::class,
+            SendPendingReservationMailNotificationListener::class,
+        );
+
     }
 
     #[Group("reservation_api")]

@@ -55,14 +55,22 @@ abstract class SendPostReservationPickupNotification extends Command
             })
             ->get();
 
-        $reservations->each(function ($reservation) use ($watiApi) {
+        $contacts = $reservations->map(function ($reservation) {
+            return [
+                'whatsappNumber' => $reservation->phone,
+                'name' => $reservation->fullname,
+            ];
+        });
+
+        $receivers = $reservations->map(function ($reservation) {
             $franchiseName = $reservation->franchiseObject->name;
             $reservationCode = $reservation->reserve_code;
             $whatsappNumber = $reservation->phone;
             $userName = $reservation->fullname;
-            $templateName = $this->getTemplateName();
-            $broadcastName = "{$this->getBaseBroadcastName()} - Código: {$reservationCode}";
-            $parameters = [
+
+            return [
+                'whatsappNumber' => $whatsappNumber,
+                'customParams' => [
                 [
                     'name' => 'fullname',
                     'value' => $userName,
@@ -82,6 +90,26 @@ abstract class SendPostReservationPickupNotification extends Command
                 [
                     'name' => 'pickup_location',
                     'value' => $reservation->pickupLocation->name,
+                ],
+                [
+                    'name' => 'franchise_name',
+                    'value' => $franchiseName,
+                ],
+            ]];
+
+        })->toArray();
+
+        $reservations->each(function ($reservation) use ($watiApi) {
+            $franchiseName = $reservation->franchiseObject->name;
+            $reservationCode = $reservation->reserve_code;
+            $whatsappNumber = $reservation->phone;
+            $userName = $reservation->fullname;
+            $templateName = $this->getTemplateName();
+            $broadcastName = "{$this->getBaseBroadcastName()} - Código: {$reservationCode}";
+            $parameters = [
+                [
+                    'name' => 'fullname',
+                    'value' => $userName,
                 ],
                 [
                     'name' => 'franchise_name',
