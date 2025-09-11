@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use App\Models\Reservation;
 use App\Enums\ReservationStatus;
+use App\Rentcar\Wati;
 use Exception;
 
 abstract class SendReservationPickupNotification extends Command
@@ -48,7 +49,7 @@ abstract class SendReservationPickupNotification extends Command
 
         $today = now()->format('Y-m-d');
         $templateName = $this->getTemplateName();
-        $broadcastName = $this->getBaseBroadcastName() . ' ' . now()->format('Y-m-d');
+        $broadcastName = $this->getBaseBroadcastName() . ' ' . $today;
         $baseLog = $this->getLogPrefix() . " Pickup Notification";
 
         $reservations = $this->getBaseQuery()
@@ -71,8 +72,8 @@ abstract class SendReservationPickupNotification extends Command
 
             $franchiseName = $reservation->franchiseObject->name;
             $reservationCode = $reservation->reserve_code;
-            $whatsappNumber = $reservation->phone;
-            $userName = $reservation->fullname;
+            $whatsappNumber = Wati::cleanupPhone($reservation->phone);
+            $userName = Wati::cleanupName($reservation->fullname);
 
             return [
                 'whatsappNumber' => $whatsappNumber,
@@ -106,7 +107,7 @@ abstract class SendReservationPickupNotification extends Command
 
         });
 
-        if(count($reservations) > 0){
+        if($reservations->count() > 0){
             // Create contacts in wati
             $contacts->each(function ($user) use ($watiApi, $baseLog) {
                 $whatsappNumber = $user['whatsappNumber'];
