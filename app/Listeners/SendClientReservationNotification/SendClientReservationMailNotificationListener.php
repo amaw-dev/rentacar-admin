@@ -1,13 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Listeners\SendClientReservationNotification;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use App\Events\NewReservationEvent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,11 +18,8 @@ use App\Mail\ReservationClientNotification\Failed\AlquilatucarroFailedReservatio
 use App\Mail\ReservationClientNotification\Failed\AlquilameFailedReservationClientNotification;
 use App\Mail\ReservationClientNotification\Failed\AlquicarrosFailedReservationClientNotification;
 
-
-class SendClientReservationNotificationJob implements ShouldQueue
+class SendClientReservationMailNotificationListener extends SendClientReservationNotificationListener
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     public $franchisesEmails = [
         'alquilatucarro' => [
             ReservationStatus::Reservado->value  =>  AlquilatucarroReservedReservationClientNotification::class,
@@ -46,44 +38,31 @@ class SendClientReservationNotificationJob implements ShouldQueue
         ],
     ];
 
-    public $reservation;
-
     /**
-     * Create a new job instance.
-     *
-     * @return void
+     * Handle the event.
      */
-    public function __construct(Reservation $reservation)
+    public function handle(NewReservationEvent $event): void
     {
-        $this->reservation = $reservation;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $franchise = $this->reservation->franchiseObject->name;
+        $reservation = $event->reservation;
+        $franchise = $reservation->franchiseObject->name;
 
         if(!is_null($franchise)){
             try {
-                $reservationStatus = ReservationStatus::tryFrom($this->reservation->status);
+                $reservationStatus = ReservationStatus::tryFrom($reservation->status);
 
                 // send to client a notification
                 $franchiseEmail = $this->franchisesEmails[$franchise][$reservationStatus->value];
 
                 Mail::mailer($franchise)
-                ->to($this->reservation->email)
-                ->send(new $franchiseEmail($this->reservation));
+                ->to($reservation->email)
+                ->send(new $franchiseEmail($reservation));
 
-                Log::info("An email was send to {$this->reservation->email}", $this->reservation->toArray());
+                Log::info("An email was send to {$reservation->email}", $reservation->toArray());
             } catch (\Throwable $th) {
                 Log::error($th->getMessage());
                 \Sentry\captureException($th);
             }
         }
-        else Log::error("No franchise associated", $this->reservation->toArray());
+        else Log::error("No franchise associated", $reservation->toArray());
     }
 }

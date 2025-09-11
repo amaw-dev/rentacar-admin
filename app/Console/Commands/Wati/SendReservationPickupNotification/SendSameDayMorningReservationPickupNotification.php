@@ -25,7 +25,7 @@ class SendSameDayMorningReservationPickupNotification extends SendReservationPic
     {
         $today = now()->format('Y-m-d');
         $tomorrow = now()->addDay()->format('Y-m-d');
-        $startHour = "14:00";
+        $startHour = "14:01";
         $endHour = "02:00";
 
         $initDatetime = $today . ' ' . $startHour;

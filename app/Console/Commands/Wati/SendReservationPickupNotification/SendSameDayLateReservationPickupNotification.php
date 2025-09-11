@@ -24,7 +24,7 @@ class SendSameDayLateReservationPickupNotification extends SendReservationPickup
     protected function getBaseQuery(): Builder
     {
         $tomorrow = now()->addDay()->format('Y-m-d');
-        $startHour = "02:00";
+        $startHour = "02:01";
         $endHour = "14:00";
 
         $initDatetime = $tomorrow . ' ' . $startHour;

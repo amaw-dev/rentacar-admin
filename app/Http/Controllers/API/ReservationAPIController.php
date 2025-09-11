@@ -17,6 +17,9 @@ use App\Jobs\SendPendingReservationNotificationJob;
 use App\Jobs\SendLocalizaTotalInsuranceReservationNotificationJob;
 use App\Rentcar\Localiza\VehRes\LocalizaAPIVehRes;
 
+use App\Events\NewReservationEvent;
+use App\Events\NewMonthlyReservationEvent;
+
 class ReservationAPIController extends Controller
 {
 
@@ -70,15 +73,8 @@ class ReservationAPIController extends Controller
 
                     $reservation->reserve_code = $reservationResult['reserveCode'];
 
-                    if($reservation->save()){
-                        dispatch(new SendClientReservationNotificationJob($reservation));
-                        if($reservationStatus === ReservationAPIStatus::Pending){
-                            dispatch(new SendPendingReservationNotificationJob($reservation)); // aditional notification to localiza to hurry them up
-                        }
-                        else if($reservation->total_insurance){
-                            dispatch(new SendLocalizaTotalInsuranceReservationNotificationJob($reservation));
-                        }
-                    }
+                    if($reservation->save())
+                        NewReservationEvent::dispatch($reservation, $reservationStatus);
 
                 }
 
@@ -99,7 +95,9 @@ class ReservationAPIController extends Controller
             try {
                 $reservation->status = ReservationStatus::Mensualidad->value;
                 if($reservation->save()){
-                    dispatch(new SendLocalizaReservationRequestJob($reservation));
+
+                    NewMonthlyReservationEvent::dispatch($reservation);
+
                     return [
                         'reservationStatus' => ReservationStatus::Pendiente->value,
                         'reserveCode'       => ReservationStatus::Pendiente->value,
