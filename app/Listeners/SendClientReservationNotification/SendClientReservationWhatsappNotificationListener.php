@@ -112,5 +112,26 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         } catch (Exception $e) {
             Log::error($sendMessageTemplateErrorLogInfo . " - " . $e->getMessage());
         }
+
+        // Send second part new reservations notifications (instructions) via wati
+        try {
+            $sendMessageTemplateSuccessLogInfo = "{$baseLog} Instructions Code: {$reservationCode} sent {$today}";
+            $sendMessageTemplateErrorLogInfo = "{$baseLog} Error sending new reservation instructions notification {$today}";
+
+            $templateName = 'nueva_reserva_instrucciones';
+            $broadcastName = "NRI {$reservationCode} {$today}";
+            $params = [];
+
+            $response = $watiApi->sendTemplateMessage($whatsappNumber, $templateName, $broadcastName, $params);
+            $result = $response['result'] ?? false;
+
+            if ($response['result']) {
+                Log::info($sendMessageTemplateSuccessLogInfo);
+            } else {
+                throw new Exception("Failed to send new reservation notification {$reservationCode} in {$today} " . json_encode($response));
+            }
+        } catch (Exception $e) {
+            Log::error($sendMessageTemplateErrorLogInfo . " - " . $e->getMessage());
+        }
     }
 }
