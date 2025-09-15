@@ -16,7 +16,7 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
 
     protected function getTemplateName(): string
     {
-        return 'nueva_reserva';
+        return 'nueva_reserva_1';
     }
 
     protected function getBaseBroadcastName(): string
