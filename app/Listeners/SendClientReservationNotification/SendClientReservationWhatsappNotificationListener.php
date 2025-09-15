@@ -32,7 +32,6 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         $watiApi = app('wati');
 
         $templateName = $this->getTemplateName();
-        $broadcastName = $this->getBaseBroadcastName() . ' ' . now()->format('Y-m-d');
         $baseLog = $this->getLogPrefix() . " Notification";
         $reservation = $event->reservation;
         $today = now()->format('Y-m-d');
@@ -41,6 +40,8 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         $reservationCode = $reservation->reserve_code;
         $whatsappNumber = $reservation->phone;
         $userName = $reservation->fullname;
+
+        $broadcastName = $this->getBaseBroadcastName() . ' ' . $reservationCode;
 
         $params = [
             [
