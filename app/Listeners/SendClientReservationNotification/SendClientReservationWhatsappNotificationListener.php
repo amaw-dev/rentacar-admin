@@ -119,7 +119,7 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
             $sendMessageTemplateSuccessLogInfo = "{$baseLog} Instructions Code: {$reservationCode} sent {$today}";
             $sendMessageTemplateErrorLogInfo = "{$baseLog} Error sending new reservation instructions notification {$today}";
 
-            $templateName = 'nueva_reserva_instrucciones';
+            $templateName = 'nueva_reserva_instrucciones_1';
             $broadcastName = "NRI {$reservationCode} {$today}";
             $params = [];
 
