@@ -172,6 +172,7 @@
                         "
                     >
                         <!-- DETALLES DE TARIFAS -->
+                        <!--
                         <div class="fila" style="margin-bottom: 1%">
                             <p class="pequeña columna">
                                 Tarifa Día:
@@ -180,10 +181,14 @@
                                 {{ reservation.daily_base_fee }}
                             </p>
                         </div>
+                        -->
                         <div class="fila" style="margin-bottom: 1%">
-                            <p class="pequeña columna">
+                            <!-- <p class="pequeña columna">
                                 Tarifa por ({{ reservation.selected_days }})
                                 días:
+                            </p> -->
+                            <p class="pequeña columna">
+                                Tarifa:
                             </p>
                             <p class="pequeña text-right columna">
                                 {{ reservation.base_fee }}
