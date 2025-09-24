@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use App\Models\Reservation;
 use App\Enums\ReservationStatus;
-use App\Rentcar\Wati;
+use App\Rentcar\Wati as WatiUtils;
+use App\Facades\Wati;
 use Exception;
 
 abstract class SendPostReservationPickupNotification extends Command
@@ -45,8 +46,6 @@ abstract class SendPostReservationPickupNotification extends Command
      */
     public function handle()
     {
-        $watiApi = app('wati');
-
         $today = now()->format('Y-m-d');
         $templateName = $this->getTemplateName();
         $broadcastName = $this->getBaseBroadcastName() . ' ' . $today;
@@ -56,8 +55,7 @@ abstract class SendPostReservationPickupNotification extends Command
             ->whereNotNull('reserve_code')
             ->where(function (Builder $query) {
                 $query
-                ->where('status', ReservationStatus::Reservado)
-                ->orWhere('status', ReservationStatus::Mensualidad);
+                ->where('status', ReservationStatus::Reservado);
             })
             ->get();
 
@@ -71,8 +69,8 @@ abstract class SendPostReservationPickupNotification extends Command
         $receivers = $reservations->map(function ($reservation) {
             $franchiseName = $reservation->franchiseObject->name;
             $reservationCode = $reservation->reserve_code;
-            $whatsappNumber = Wati::cleanupPhone($reservation->phone);
-            $userName = Wati::cleanupName($reservation->fullname);
+            $whatsappNumber = WatiUtils::cleanupPhone($reservation->phone);
+            $userName = WatiUtils::cleanupName($reservation->fullname);
 
             return [
                 'whatsappNumber' => $whatsappNumber,
@@ -91,14 +89,14 @@ abstract class SendPostReservationPickupNotification extends Command
 
         if(count($reservations) > 0){
             // Create contacts in wati
-            $contacts->each(function ($user) use ($watiApi, $baseLog) {
+            $contacts->each(function ($user) use ($baseLog) {
                 $whatsappNumber = $user['whatsappNumber'];
                 $userName = $user['name'];
                 $addContactSuccessLogInfo = "{$baseLog} Contact registered: {$userName} ({$whatsappNumber})";
                 $addContactErrorLogInfo = "{$baseLog} Error registering contact: {$userName} ({$whatsappNumber})";
 
                 try {
-                    $response = $watiApi->addContact($whatsappNumber, $userName);
+                    $response = Wati::addContact($whatsappNumber, $userName);
                     $result = $response['result'] ?? false;
                     if ($result) {
                         $this->info($addContactSuccessLogInfo);
@@ -121,7 +119,7 @@ abstract class SendPostReservationPickupNotification extends Command
                     throw new Exception("Failed to send notification in {$today}, no receivers provided. ");
                 }
 
-                $response = $watiApi->sendTemplateMessages($templateName, $broadcastName, $receivers->toArray());
+                $response = Wati::sendTemplateMessages($templateName, $broadcastName, $receivers->toArray());
                 $result = $response['result'] ?? false;
 
                 if ($response['result']) {

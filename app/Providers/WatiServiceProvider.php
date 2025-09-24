@@ -4,10 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Psr\Http\Message\RequestInterface;
+use Illuminate\Contracts\Support\DeferrableProvider;
 
-class WatiServiceProvider extends ServiceProvider
+class WatiServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register services.
@@ -73,5 +72,17 @@ class WatiServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/wati.php' => config_path('wati.php'),
         ], 'wati-config');
+
     }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array<int, string>
+     */
+    public function provides(): array
+    {
+        return ['wati'];
+    }
+
 }

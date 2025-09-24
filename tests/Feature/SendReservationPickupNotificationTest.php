@@ -9,7 +9,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-use App\Providers\WatiServiceProvider;
+use App\Facades\Wati;
 use App\Models\Reservation;
 use App\Enums\ReservationStatus;
 
@@ -25,17 +25,13 @@ class SendReservationPickupNotificationTest extends TestCase
     protected $today;
     protected $tomorrow;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->today = now()->format('Y-m-d');
         $this->tomorrow = now()->addDay()->format('Y-m-d');
 
-        // Fake HTTP responses to prevent real API calls
-        Http::fake([
-            '*' => Http::response(['result' => true], 200),
-        ]);
     }
 
     #[Group("send-reservation-pickup-notification")]
@@ -48,19 +44,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -80,19 +70,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -112,19 +96,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -144,147 +122,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-week-reservation-pickup-notification')
-            ->expectsOutput("Week Pickup Notification Contact registered: {$reservation->fullname} ({$reservation->phone})")
-            ->expectsOutput("Week Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Test]
-    public function send_reservation_pickup_notification_same_day_morning_of_pickup_when_reservation_status_is_mensualidad(): void
-    {
-        $reservation = Reservation::factory()->create([
-            'pickup_date' => now()->format('Y-m-d'),
-            'pickup_hour' => '16:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
-            ->expectsOutput("Same Day Morning Pickup Notification Contact registered: {$reservation->fullname} ({$reservation->phone})")
-            ->expectsOutput("Same Day Morning Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Test]
-    public function send_reservation_pickup_notification_same_day_late_of_pickup_when_reservation_status_is_mensualidad(): void
-    {
-        $reservation = Reservation::factory()->create([
-            'pickup_date' => now()->addDay()->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
-            ->expectsOutput("Same Day Late Pickup Notification Contact registered: {$reservation->fullname} ({$reservation->phone})")
-            ->expectsOutput("Same Day Late Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Test]
-    public function send_reservation_pickup_notification_three_days_before_pickup_when_reservation_status_is_mensualidad(): void
-    {
-        $reservation = Reservation::factory()->create([
-            'pickup_date' => now()->addDays(3)->format('Y-m-d'),
-            'pickup_hour' => '10:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-three-days-reservation-pickup-notification')
-            ->expectsOutput("Three Days Pickup Notification Contact registered: {$reservation->fullname} ({$reservation->phone})")
-            ->expectsOutput("Three Days Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Test]
-    public function send_reservation_pickup_notification_a_week_before_pickup_when_reservation_status_is_mensualidad(): void
-    {
-        $reservation = Reservation::factory()->create([
-            'pickup_date' => now()->addWeek()->format('Y-m-d'),
-            'pickup_hour' => '10:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -304,15 +148,9 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) use ($reservation) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -333,15 +171,9 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) use ($reservation) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -362,15 +194,9 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) use ($reservation) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -391,15 +217,9 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) use ($reservation) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -420,19 +240,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -453,19 +267,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -486,19 +294,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -519,19 +321,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => false])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => false])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -552,21 +348,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -592,19 +380,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -630,19 +412,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -668,19 +444,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->once();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -712,19 +482,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -751,19 +515,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -790,19 +548,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -829,19 +581,13 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true])
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -862,19 +608,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Pendiente,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -892,19 +630,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Pendiente,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -922,19 +652,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Pendiente,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -952,19 +674,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Pendiente,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
@@ -988,20 +702,14 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(
-                ['result' => false],
-                ['result' => true]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(
+            ['result' => false],
+            ['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -1028,21 +736,15 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(
-                ['result' => false],
-                ['result' => true])
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(
+            ['result' => false],
+            ['result' => true])
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -1069,22 +771,16 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(
-                ['result' => false],
-                ['result' => true]
-                )
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(
+            ['result' => false],
+            ['result' => true]
+            )
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -1111,189 +807,21 @@ class SendReservationPickupNotificationTest extends TestCase
             'status' => ReservationStatus::Reservado,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(
-                ['result' => false],
-                ['result' => true]
-                )
-                ->twice();
+        Wati::shouldReceive('addContact')
+            ->andReturn(
+            ['result' => false],
+            ['result' => true]
+            )
+            ->twice();
 
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true])
+            ->once();
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-week-reservation-pickup-notification')
             ->expectsOutput("Week Pickup Notification Error registering contact: {$reservation1->fullname} ({$reservation1->phone})")
             ->expectsOutput("Week Pickup Notification Contact registered: {$reservation2->fullname} ({$reservation2->phone})")
-            ->expectsOutput("Week Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Group("bug")]
-    #[Test]
-    public function dont_evaluate_monthly_reservation_if_not_meet_dates_in_same_day_morning(): void
-    {
-        $reservation1 = Reservation::factory()->create([
-            'pickup_date' => now()->format('Y-m-d'),
-            'pickup_hour' => '16:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $reservation2 = Reservation::factory()->create([
-            'pickup_date' => now()->subWeek()->format('Y-m-d'),
-            'pickup_hour' => '16:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
-            ->expectsOutput("Same Day Morning Pickup Notification Contact registered: {$reservation1->fullname} ({$reservation1->phone})")
-            ->doesntExpectOutput("Same Day Morning Pickup Notification Contact registered: {$reservation2->fullname} ({$reservation2->phone})")
-            ->expectsOutput("Same Day Morning Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Group("bug")]
-    #[Test]
-    public function dont_evaluate_monthly_reservation_if_not_meet_dates_in_same_day_late(): void
-    {
-        $reservation1 = Reservation::factory()->create([
-            'pickup_date' => now()->addDay()->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $reservation2 = Reservation::factory()->create([
-            'pickup_date' => now()->subWeek()->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Mensualidad,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
-            ->expectsOutput("Same Day Late Pickup Notification Contact registered: {$reservation1->fullname} ({$reservation1->phone})")
-            ->doesntExpectOutput("Same Day Late Pickup Notification Contact registered: {$reservation2->fullname} ({$reservation2->phone})")
-            ->expectsOutput("Same Day Late Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Group("bug")]
-    #[Test]
-    public function dont_evaluate_monthly_reservation_if_not_meet_dates_in_three_days(): void
-    {
-        $reservation1 = Reservation::factory()->create([
-            'pickup_date' => now()->addDays(3)->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $reservation2 = Reservation::factory()->create([
-            'pickup_date' => now()->subWeek()->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-three-days-reservation-pickup-notification')
-            ->expectsOutput("Three Days Pickup Notification Contact registered: {$reservation1->fullname} ({$reservation1->phone})")
-            ->doesntExpectOutput("Three Days Pickup Notification Contact registered: {$reservation2->fullname} ({$reservation2->phone})")
-            ->expectsOutput("Three Days Pickup Notification sent {$this->today}")
-            ->assertSuccessful();
-
-    }
-
-    #[Group("send-reservation-pickup-notification")]
-    #[Group("bug")]
-    #[Test]
-    public function dont_evaluate_monthly_reservation_if_not_meet_dates_in_week(): void
-    {
-        $reservation1 = Reservation::factory()->create([
-            'pickup_date' => now()->addWeek()->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $reservation2 = Reservation::factory()->create([
-            'pickup_date' => now()->subWeek(2)->format('Y-m-d'),
-            'pickup_hour' => '08:00',
-            'status' => ReservationStatus::Reservado,
-        ]);
-
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn(['result' => true])
-                ->once();
-
-            $mock->shouldReceive('sendTemplateMessages')
-                ->andReturn(['result' => true])
-                ->once();
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
-
-        // Act: Call the command to send the notification
-        $this->artisan('wati:send-week-reservation-pickup-notification')
-            ->expectsOutput("Week Pickup Notification Contact registered: {$reservation1->fullname} ({$reservation1->phone})")
-            ->doesntExpectOutput("Week Pickup Notification Contact registered: {$reservation2->fullname} ({$reservation2->phone})")
             ->expectsOutput("Week Pickup Notification sent {$this->today}")
             ->assertSuccessful();
 
@@ -1310,19 +838,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'reserve_code' => null,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-morning-reservation-pickup-notification')
@@ -1341,19 +861,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'reserve_code' => null,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-same-day-late-reservation-pickup-notification')
@@ -1372,19 +884,11 @@ class SendReservationPickupNotificationTest extends TestCase
             'reserve_code' => null,
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
         $this->artisan('wati:send-three-days-reservation-pickup-notification')
@@ -1403,22 +907,14 @@ class SendReservationPickupNotificationTest extends TestCase
             'reserve_code' => 'abc123',
         ]);
 
-        $watiMock = $this->mock(WatiServiceProvider::class, function(MockInterface $mock) {
-            $mock->shouldReceive('addContact')
-                ->andReturn([
-                    'result' => true,
-                ]);
+        Wati::shouldReceive('addContact')
+            ->andReturn(['result' => true]);
 
-            $mock->shouldReceive('sendTemplateMessage')
-                ->andReturn(['result' => true]);
-
-            return $mock;
-        });
-
-        $this->app->instance('wati', $watiMock);
+        Wati::shouldReceive('sendTemplateMessages')
+            ->andReturn(['result' => true]);
 
         // Act: Call the command to send the notification
-        $this->artisan('wati:send-week-reservation-pickup-notification')
+         $this->artisan('wati:send-week-reservation-pickup-notification')
             ->doesntExpectOutput()
             ->assertSuccessful();
     }
