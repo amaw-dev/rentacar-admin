@@ -18,7 +18,7 @@ class WatiProductionTest extends TestCase
     protected $today;
     protected $tomorrow;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
