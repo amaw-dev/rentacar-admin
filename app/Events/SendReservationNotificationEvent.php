@@ -8,8 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Reservation;
 use App\Enums\ReservationAPIStatus;
 
-
-class NewReservationEvent
+class SendReservationNotificationEvent
 {
     use Dispatchable, SerializesModels;
 
@@ -18,11 +17,10 @@ class NewReservationEvent
      */
     public function __construct(
         public Reservation $reservation,
-        public ReservationAPIStatus $reservationAPIStatus
+        public ?ReservationAPIStatus $reservationAPIStatus = null
     )
     {
 
     }
-
 
 }

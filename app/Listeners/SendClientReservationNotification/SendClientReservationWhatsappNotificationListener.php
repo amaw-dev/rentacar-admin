@@ -3,45 +3,85 @@
 namespace App\Listeners\SendClientReservationNotification;
 
 use Illuminate\Support\Facades\Log;
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
+use App\Enums\ReservationStatus;
+use App\Models\Reservation;
+use App\Facades\Wati;
 use \Exception;
 
 class SendClientReservationWhatsappNotificationListener extends SendClientReservationNotificationListener
 {
 
-    protected function getLogPrefix(): string
+    public $templateMessages;
+    public $sendingMethods;
+    public $today;
+
+    public function __construct()
     {
-        return 'New Reservation';
+        $this->today = now()->format('Y-m-d');
+
+        $this->templateMessages = [
+            ReservationStatus::Reservado->value => 'nueva_reserva_1',
+            ReservationStatus::Pendiente->value => 'reserva_pendiente',
+            ReservationStatus::SinDisponibilidad->value => 'reserva_sin_disponibilidad',
+        ];
+
+        $this->sendingMethods = [
+            ReservationStatus::Reservado->value => 'sendReservedReservationNotification',
+            ReservationStatus::Pendiente->value => 'sendPendingReservationNotification',
+            ReservationStatus::SinDisponibilidad->value => 'sendFailedReservationNotification',
+        ];
+
     }
 
-    protected function getTemplateName(): string
+    protected function sendPendingReservationNotification(Reservation $reservation): void
     {
-        return 'nueva_reserva_1';
-    }
-
-    protected function getBaseBroadcastName(): string
-    {
-        return 'NR';
-    }
-
-    /**
-     * Handle the event.
-     */
-    public function handle(NewReservationEvent $event): void
-    {
-        $watiApi = app('wati');
-
-        $templateName = $this->getTemplateName();
-        $baseLog = $this->getLogPrefix() . " Notification";
-        $reservation = $event->reservation;
-        $today = now()->format('Y-m-d');
-
         $franchiseName = $reservation->franchiseObject->name;
         $reservationCode = $reservation->reserve_code;
         $whatsappNumber = $reservation->phone;
         $userName = $reservation->fullname;
 
-        $broadcastName = $this->getBaseBroadcastName() . ' ' . $reservationCode;
+        $params = [
+            [
+                'name' => 'fullname',
+                'value' => $userName,
+            ],
+            [
+                'name' => 'franchise_name',
+                'value' => $franchiseName,
+            ],
+        ];
+
+        $baseLog = "Pending Reservation Notification";
+        $successLog = "{$baseLog} Code: {$reservationCode} sent {$this->today}";
+        $errorLog = "{$baseLog} Error sending notification {$this->today}";
+
+        $templateName = $this->templateMessages[ReservationStatus::Pendiente->value];
+        $broadcastName =  "RP {$reservationCode}";
+
+        $this->sendReservationNotification(
+            $whatsappNumber,
+            $templateName,
+            $broadcastName,
+            $params,
+            $successLog,
+            $errorLog
+        );
+    }
+
+    protected function sendReservedReservationNotification(Reservation $reservation): void
+    {
+        $franchiseName = $reservation->franchiseObject->name;
+        $reservationCode = $reservation->reserve_code;
+        $whatsappNumber = $reservation->phone;
+        $userName = $reservation->fullname;
+
+        $baseLog = "New Reservation Notification";
+        $successLog = "{$baseLog} Code: {$reservationCode} sent {$this->today}";
+        $errorLog = "{$baseLog} Error sending notification {$this->today}";
+
+        $templateName = $this->templateMessages[ReservationStatus::Reservado->value];
+        $broadcastName = "NR {$reservationCode}";
 
         $params = [
             [
@@ -82,58 +122,125 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
             ],
         ];
 
-        $addContactSuccessLogInfo = "{$baseLog} Contact registered: {$userName} ({$whatsappNumber})";
-        $addContactErrorLogInfo = "{$baseLog} Error registering contact: {$userName} ({$whatsappNumber})";
+        $this->sendReservationNotification(
+            $whatsappNumber,
+            $templateName,
+            $broadcastName,
+            $params,
+            $successLog,
+            $errorLog,
+        );
 
+        $this->sendReservedReservationNotificationInstructions($reservation);
+    }
+
+    protected function sendReservedReservationNotificationInstructions(Reservation $reservation): void
+    {
+        $reservationCode = $reservation->reserve_code;
+        $whatsappNumber = $reservation->phone;
+        $userName = $reservation->fullname;
+        $params = [];
+
+        $templateName = 'nueva_reserva_instrucciones_1';
+        $broadcastName = "NRI {$reservationCode}";
+
+        $baseLog = "Reservation Instructions Notification";
+        $successLog = "{$baseLog} Code: {$reservationCode} sent {$this->today}";
+        $errorLog = "{$baseLog} Error sending notification {$this->today}";
+
+        $this->sendReservationNotification(
+            $whatsappNumber,
+            $templateName,
+            $broadcastName,
+            $params,
+            $successLog,
+            $errorLog,
+        );
+    }
+
+    protected function sendFailedReservationNotification(Reservation $reservation): void
+    {
+        $franchiseName = $reservation->franchiseObject->name;
+        $reservationCode = $reservation->reserve_code;
+        $whatsappNumber = $reservation->phone;
+        $userName = $reservation->fullname;
+        $params = [
+            [
+                'name' => 'fullname',
+                'value' => $userName,
+            ],
+            [
+                'name' => 'reservation_code',
+                'value' => $reservationCode,
+            ],
+            [
+                'name' => 'franchise_name',
+                'value' => $franchiseName,
+            ],
+        ];
+
+        $baseLog = "Failed Notification";
+        $successLog = "{$baseLog} Code: {$reservationCode} sent {$this->today}";
+        $errorLog = "{$baseLog} Error sending notification {$this->today}";
+
+        $templateName = $this->templateMessages[ReservationStatus::SinDisponibilidad->value];
+        $broadcastName = "FR {$reservationCode}";
+
+        $this->sendReservationNotification(
+            $whatsappNumber,
+            $templateName,
+            $broadcastName,
+            $params,
+            $successLog,
+            $errorLog
+        );
+    }
+
+
+    protected function sendReservationNotification(
+        string $whatsappNumber,
+        string $templateName,
+        string $broadcastName,
+        array $params,
+        string $successLog = '',
+        string $errorLog = '',
+    ): void
+    {
         try {
-            $response = $watiApi->addContact($whatsappNumber, $userName);
-            $result = $response['result'] ?? false;
-            if ($result) {
-                Log::info($addContactSuccessLogInfo);
-            } else {
-                throw new \Exception("Failed to register contact: " . json_encode($response));
-            }
-        } catch (Exception $e) {
-            Log::error($addContactErrorLogInfo . " - " . $e->getMessage());
-        }
-
-        // Send first part new reservations notifications via wati
-        $sendMessageTemplateSuccessLogInfo = "{$baseLog} Code: {$reservationCode} sent {$today}";
-        $sendMessageTemplateErrorLogInfo = "{$baseLog} Error sending notification {$today}";
-
-        try {
-
-            $response = $watiApi->sendTemplateMessage($whatsappNumber, $templateName, $broadcastName, $params);
+            $response = Wati::sendTemplateMessage($whatsappNumber, $templateName, $broadcastName, $params);
             $result = $response['result'] ?? false;
 
             if ($response['result']) {
-                Log::info($sendMessageTemplateSuccessLogInfo);
+                Log::info($successLog);
             } else {
-                throw new Exception("Failed to send notification in {$today} " . json_encode($response));
+                throw new Exception($errorLog . json_encode($response));
             }
         } catch (Exception $e) {
-            Log::error($sendMessageTemplateErrorLogInfo . " - " . $e->getMessage());
+            Log::error($errorLog . " - " . $e->getMessage());
+        }
+    }
+
+
+
+    /**
+     * Handle the event.
+     */
+    public function handle(SendReservationNotificationEvent $event): void
+    {
+        $reservation = $event->reservation;
+        $status = $reservation->status;
+
+        // Obtener el nombre del método desde el arreglo usando el valor del enum
+        $methodName = $this->sendingMethods[$status] ?? null;
+
+        // Verificar si el método existe y es callable
+        if ($methodName && method_exists($this, $methodName)) {
+            // Ejecutar el método dinámicamente
+            $this->$methodName($reservation);
+        } else {
+            // Manejar el caso en que no se encuentre el método
+            throw new Exception("Método de notificación no encontrado para el estado: {$status}");
         }
 
-        // Send second part new reservations notifications (instructions) via wati
-        try {
-            $sendMessageTemplateSuccessLogInfo = "{$baseLog} Instructions Code: {$reservationCode} sent {$today}";
-            $sendMessageTemplateErrorLogInfo = "{$baseLog} Error sending new reservation instructions notification {$today}";
-
-            $templateName = 'nueva_reserva_instrucciones_1';
-            $broadcastName = "NRI {$reservationCode} {$today}";
-            $params = [];
-
-            $response = $watiApi->sendTemplateMessage($whatsappNumber, $templateName, $broadcastName, $params);
-            $result = $response['result'] ?? false;
-
-            if ($response['result']) {
-                Log::info($sendMessageTemplateSuccessLogInfo);
-            } else {
-                throw new Exception("Failed to send new reservation notification {$reservationCode} in {$today} " . json_encode($response));
-            }
-        } catch (Exception $e) {
-            Log::error($sendMessageTemplateErrorLogInfo . " - " . $e->getMessage());
-        }
     }
 }

@@ -6,6 +6,8 @@ use App\Enums\ReservationStatus;
 use App\Jobs\SendClientReservationNotificationJob;
 use App\Models\Reservation;
 
+use App\Events\SendReservationNotificationEvent;
+
 class ReservationObserver
 {
     public array $triggerClientNotificationStatuses = [
@@ -27,11 +29,12 @@ class ReservationObserver
     public function updated(Reservation $reservation): void
     {
         if($reservation->wasChanged('status')){
+
             if(
                 in_array($reservation->status, $this->triggerClientNotificationStatuses)
                 && $reservation->reserve_code
             )
-                dispatch(new SendClientReservationNotificationJob($reservation));
+                SendReservationNotificationEvent::dispatch($reservation);
         }
     }
 

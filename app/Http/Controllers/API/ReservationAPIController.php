@@ -17,7 +17,7 @@ use App\Jobs\SendPendingReservationNotificationJob;
 use App\Jobs\SendLocalizaTotalInsuranceReservationNotificationJob;
 use App\Rentcar\Localiza\VehRes\LocalizaAPIVehRes;
 
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use App\Events\NewMonthlyReservationEvent;
 
 class ReservationAPIController extends Controller
@@ -74,7 +74,7 @@ class ReservationAPIController extends Controller
                     $reservation->reserve_code = $reservationResult['reserveCode'];
 
                     if($reservation->save())
-                        NewReservationEvent::dispatch($reservation, $reservationStatus);
+                        SendReservationNotificationEvent::dispatch($reservation, $reservationStatus);
 
                 }
 

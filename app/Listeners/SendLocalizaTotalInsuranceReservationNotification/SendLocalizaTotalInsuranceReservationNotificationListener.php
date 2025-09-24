@@ -4,7 +4,7 @@ namespace App\Listeners\SendLocalizaTotalInsuranceReservationNotification;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 
 class SendLocalizaTotalInsuranceReservationNotificationListener implements ShouldQueue
 {
@@ -12,7 +12,7 @@ class SendLocalizaTotalInsuranceReservationNotificationListener implements Shoul
 
     public $tries = 2;
 
-    public function shouldQueue(NewReservationEvent $event): bool
+    public function shouldQueue(SendReservationNotificationEvent $event): bool
     {
         return ($event->reservation->total_insurance) ? true : false;
     }

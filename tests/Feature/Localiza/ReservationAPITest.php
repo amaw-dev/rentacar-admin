@@ -3,7 +3,7 @@
 namespace Tests\Feature\Localiza;
 
 use App\Enums\MonthlyMileage;
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use App\Events\NewMonthlyReservationEvent;
 use App\Listeners\SendClientReservationNotification\SendClientReservationMailNotificationListener;
 use App\Listeners\SendClientReservationNotification\SendClientReservationWhatsappNotificationListener;
@@ -124,7 +124,7 @@ class ReservationAPITest extends TestCase
         $this->assertEquals($reservation->franchise, $franchise->id);
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
     }
 
@@ -172,7 +172,7 @@ class ReservationAPITest extends TestCase
         $this->assertEquals($reservation->user, 'referer');
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
 
     }
@@ -222,7 +222,7 @@ class ReservationAPITest extends TestCase
         $this->assertEquals($reservation->monthly_mileage, MonthlyMileage::twoKKms->value);
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
 
     }
@@ -272,7 +272,7 @@ class ReservationAPITest extends TestCase
         $this->assertEquals($reservation->monthly_mileage, null);
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
 
     }
@@ -322,7 +322,7 @@ class ReservationAPITest extends TestCase
         $this->assertEquals($reservation->monthly_mileage, null);
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
     }
 
@@ -372,7 +372,7 @@ class ReservationAPITest extends TestCase
 
 
         Event::assertDispatched(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
         );
 
     }
@@ -1108,7 +1108,7 @@ class ReservationAPITest extends TestCase
         $this->assertNotNull($reservation);
 
         Event::assertListening(
-            NewReservationEvent::class,
+            SendReservationNotificationEvent::class,
             SendPendingReservationMailNotificationListener::class,
         );
 

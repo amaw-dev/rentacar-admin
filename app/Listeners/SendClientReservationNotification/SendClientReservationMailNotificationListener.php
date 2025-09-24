@@ -2,7 +2,7 @@
 
 namespace App\Listeners\SendClientReservationNotification;
 
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -41,7 +41,7 @@ class SendClientReservationMailNotificationListener extends SendClientReservatio
     /**
      * Handle the event.
      */
-    public function handle(NewReservationEvent $event): void
+    public function handle(SendReservationNotificationEvent $event): void
     {
         $reservation = $event->reservation;
         $franchise = $reservation->franchiseObject->name;

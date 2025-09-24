@@ -2,7 +2,7 @@
 
 namespace App\Listeners\SendPendingReservationNotification;
 
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -15,7 +15,7 @@ class SendPendingReservationNotificationListener implements ShouldQueue
 
     public $tries = 2;
 
-    public function shouldQueue(NewReservationEvent $event): bool
+    public function shouldQueue(SendReservationNotificationEvent $event): bool
     {
         return $event->reservationAPIStatus === ReservationAPIStatus::Pending;
     }

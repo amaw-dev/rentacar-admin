@@ -2,16 +2,19 @@
 
 namespace Tests\Feature;
 
+use Mockery;
+use Mockery\MockInterface;
+use App\Providers\WatiServiceProvider;
 use App\Enums\MonthlyMileage;
 use App\Enums\ReservationStatus;
-use App\Jobs\SendClientReservationNotificationJob;
+use App\Events\SendReservationNotificationEvent;
 use App\Mail\ReservationClientNotification\Pending\PendingReservationClientNotification;
 use App\Mail\ReservationClientNotification\Failed\FailedReservationClientNotification;
 use App\Mail\ReservationClientNotification\Reserved\ReservedReservationClientNotification;
 use App\Models\Branch;
 use App\Models\Franchise;
 use App\Models\Reservation;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -1147,7 +1150,9 @@ class ReservationTest extends TestCase
     #[Group("reservation")]
     #[Test]
     public function when_a_reservation_status_is_updated_from_pending_to_reserved_trigger_a_client_reservation_notification(){
-        Queue::fake();
+        Event::fake([
+            SendReservationNotificationEvent::class
+        ]);
 
         $reservation = Reservation::factory()->create([
             'status' => ReservationStatus::Pendiente->value
@@ -1156,7 +1161,7 @@ class ReservationTest extends TestCase
         $reservation->status = ReservationStatus::Reservado->value;
         $reservation->save();
 
-        Queue::assertPushed(SendClientReservationNotificationJob::class);
+        Event::assertDispatched(SendReservationNotificationEvent::class);
 
     }
 
@@ -1205,7 +1210,9 @@ class ReservationTest extends TestCase
     #[Group("reservation")]
     #[Test]
     public function when_a_reservation_is_updated_but_not_status_dont_trigger_a_client_reservation_notification(){
-        Queue::fake();
+        Event::fake([
+            SendReservationNotificationEvent::class
+        ]);
 
         $reservation = Reservation::factory()->create([
             'status' => ReservationStatus::Pendiente->value,
@@ -1215,14 +1222,16 @@ class ReservationTest extends TestCase
         $reservation->status = ReservationStatus::Reservado->value;
         $reservation->save();
 
-        Queue::assertNotPushed(SendClientReservationNotificationJob::class);
+        Event::assertNotDispatched(SendReservationNotificationEvent::class);
 
     }
 
     #[Group("reservation")]
     #[Test]
     public function when_a_reservation_is_updated_but_not_having_reserve_code_dont_trigger_a_client_reservation_notification(){
-        Queue::fake();
+        Event::fake([
+            SendReservationNotificationEvent::class
+        ]);
 
         $reservation = Reservation::factory()->create([
             'status' => ReservationStatus::Reservado->value
@@ -1231,7 +1240,7 @@ class ReservationTest extends TestCase
         $reservation->fullname = "test";
         $reservation->save();
 
-        Queue::assertNotPushed(SendClientReservationNotificationJob::class);
+        Event::assertNotDispatched(SendReservationNotificationEvent::class);
 
     }
 

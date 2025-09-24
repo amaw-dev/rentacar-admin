@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-use App\Events\NewReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use App\Mail\ReservationTotalInsuranceNotification\AlquilatucarroReservationTotalInsuranceNotification;
 use App\Mail\ReservationTotalInsuranceNotification\AlquilameReservationTotalInsuranceNotification;
 use App\Mail\ReservationTotalInsuranceNotification\AlquicarrosReservationTotalInsuranceNotification;
@@ -24,7 +24,7 @@ class SendLocalizaTotalInsuranceReservationMailNotificationListener extends Send
     /**
      * Handle the event.
      */
-    public function handle(NewReservationEvent $event): void
+    public function handle(SendReservationNotificationEvent $event): void
     {
         $reservation = $event->reservation;
         $franchise = $reservation->franchiseObject->name;
