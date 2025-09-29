@@ -141,7 +141,7 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         $userName = $reservation->fullname;
         $params = [];
 
-        $templateName = 'nueva_reserva_instrucciones_1';
+        $templateName = 'nueva_reserva_instrucciones_2';
         $broadcastName = "NRI {$reservationCode}";
 
         $baseLog = "Reservation Instructions Notification";
