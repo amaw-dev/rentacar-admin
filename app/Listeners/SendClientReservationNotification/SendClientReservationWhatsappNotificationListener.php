@@ -21,7 +21,7 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         $this->today = now()->format('Y-m-d');
 
         $this->templateMessages = [
-            ReservationStatus::Reservado->value => 'nueva_reserva_1',
+            ReservationStatus::Reservado->value => 'nueva_reserva_4',
             ReservationStatus::Pendiente->value => 'reserva_pendiente',
             ReservationStatus::SinDisponibilidad->value => 'reserva_sin_disponibilidad',
         ];
