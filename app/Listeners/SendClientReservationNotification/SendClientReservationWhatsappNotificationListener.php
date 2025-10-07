@@ -4,6 +4,7 @@ namespace App\Listeners\SendClientReservationNotification;
 
 use Illuminate\Support\Facades\Log;
 use App\Events\SendReservationNotificationEvent;
+use App\Events\NewMonthlyReservationEvent;
 use App\Enums\ReservationStatus;
 use App\Models\Reservation;
 use App\Facades\Wati;
