@@ -13,28 +13,9 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
 {
 
     public $templateMessages;
-    public $sendingMethods;
     public $today;
 
-    public function __construct()
-    {
-        $this->today = now()->format('Y-m-d');
-
-        $this->templateMessages = [
-            ReservationStatus::Reservado->value => 'nueva_reserva_4',
-            ReservationStatus::Pendiente->value => 'reserva_pendiente',
-            ReservationStatus::SinDisponibilidad->value => 'reserva_sin_disponibilidad',
-        ];
-
-        $this->sendingMethods = [
-            ReservationStatus::Reservado->value => 'sendReservedReservationNotification',
-            ReservationStatus::Pendiente->value => 'sendPendingReservationNotification',
-            ReservationStatus::SinDisponibilidad->value => 'sendFailedReservationNotification',
-        ];
-
-    }
-
-    protected function sendPendingReservationNotification(Reservation $reservation): void
+    public function sendPendingReservationNotification(Reservation $reservation): void
     {
         $franchiseName = $reservation->franchiseObject->name;
         $reservationCode = $reservation->reserve_code;
@@ -284,6 +265,18 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
         }
     }
 
+    public function selectReservationNotificationMethodByStatus(string|ReservationStatus $status): ?string
+    {
+        $sendingMethods = [
+            ReservationStatus::Reservado->value => 'sendReservedReservationNotification',
+            ReservationStatus::Pendiente->value => 'sendPendingReservationNotification',
+            ReservationStatus::SinDisponibilidad->value => 'sendFailedReservationNotification',
+            ReservationStatus::Mensualidad->value => 'sendMonthReservationNotification',
+        ];
+
+        $statusValue = $status instanceof ReservationStatus ? $status->value : (string) $status;
+        return $sendingMethods[$statusValue] ?? null;
+    }
 
 
     /**
@@ -291,11 +284,20 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
      */
     public function handle(SendReservationNotificationEvent|NewMonthlyReservationEvent $event): void
     {
+        $this->today = now()->format('Y-m-d');
+
+        $this->templateMessages = [
+            ReservationStatus::Reservado->value => 'nueva_reserva_4',
+            ReservationStatus::Pendiente->value => 'reserva_pendiente',
+            ReservationStatus::SinDisponibilidad->value => 'reserva_sin_disponibilidad',
+            ReservationStatus::Mensualidad->value => 'reserva_mensual',
+        ];
+
         $reservation = $event->reservation;
-        $status = $reservation->status;
+        $status = $reservation->status instanceof ReservationStatus ? $reservation->status->value : (string) $reservation->status;
 
         // Obtener el nombre del método desde el arreglo usando el valor del enum
-        $methodName = $this->sendingMethods[$status] ?? null;
+        $methodName = $this->selectReservationNotificationMethodByStatus($status);
 
         // Verificar si el método existe y es callable
         if ($methodName && method_exists($this, $methodName)) {
