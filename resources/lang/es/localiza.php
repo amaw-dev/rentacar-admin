@@ -29,11 +29,11 @@ El día y hora de recogida son iguales a los de devolución
 EOT;
 
 $inferiorPickupDate = <<<EOT
-Selecciona la hora de recogida con una o dos horas posteriores a la hora actual
+Selecciona la fecha de recogida igual o posterior a la fecha actual
 EOT;
 
 $inferiorReturnDate = <<<EOT
-Selecciona la hora de devolución con una o dos horas posteriores a la hora actual
+Selecciona la fecha de devolución igual o posterior a la fecha actual
 EOT;
 
 $holidayPickupDateBranch = <<<EOT
