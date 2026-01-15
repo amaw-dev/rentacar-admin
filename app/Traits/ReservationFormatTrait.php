@@ -38,7 +38,7 @@ trait ReservationFormatTrait {
 
     public function shortFormattedCategory(): Attribute {
         return Attribute::make(
-            get: fn () => $this->categoryObject->name ?? "",
+            get: fn () => str_replace('Gama ', '', $this->categoryObject->name ?? ""),
         );
     }
 
@@ -122,7 +122,7 @@ trait ReservationFormatTrait {
 
     public function shortFormattedPickupDate(): Attribute {
         return Attribute::make(
-            get: fn () => $this->dateFormat($this->pickup_date, output_format:"ll")
+            get: fn () => $this->dateFormat($this->pickup_date, output_format:"D MMM YY") . '<br>' . $this->hourFormat($this->pickup_hour)
         );
     }
 
@@ -174,7 +174,7 @@ trait ReservationFormatTrait {
 
     public function shortFormattedCreatedAt(): Attribute {
         return Attribute::make(
-            get: fn () => $this->dateFormat($this->created_at, output_format:"ll h:m a")
+            get: fn () => $this->dateFormat($this->created_at, output_format:"D MMM YY") . '<br>' . $this->dateFormat($this->created_at, output_format:"h:mm a")
         );
     }
 

@@ -57,11 +57,24 @@
                         RECOGIDA
                     </RentacarSortableCol>
                 </template>
+                <template #header-status="header">
+                    <RentacarSortableCol database_col="status" >
+                        ESTADO
+                    </RentacarSortableCol>
+                </template>
+                <template #header-franchise="header">
+                    <RentacarSortableCol database_col="franchise" >
+                        FRANQUICIA
+                    </RentacarSortableCol>
+                </template>
               <template #expand="item">
                 <Expand :item="item" />
               </template>
               <template #item-created_at="{ created_at }">
-                <span :title="created_at" v-text="created_at"></span>
+                <span :title="created_at" v-html="created_at"></span>
+              </template>
+              <template #item-pickup_date="{ pickup_date }">
+                <span :title="pickup_date" v-html="pickup_date"></span>
               </template>
               <template #item-fullname="{ fullname }">
                 <span class="short-text" :title="fullname" v-text="fullname"></span>
