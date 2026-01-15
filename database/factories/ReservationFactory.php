@@ -47,7 +47,7 @@ class ReservationFactory extends Factory
             'total_price_to_pay'    =>  $this->faker->randomNumber(6, true),
             'total_price_localiza'  =>  $this->faker->randomNumber(6, true),
             'franchise'             =>  Franchise::factory(),
-            'user'                  =>  $this->faker->word,
+            'user'                  =>  $this->faker->randomElement(['Juan Pérez', 'María García', 'Carlos López', 'Ana Martínez', 'Pedro Rodríguez', 'Laura Sánchez', 'Diego Ramírez', 'Sofia Torres', null]),
             'reserve_code'          =>  (string) $this->faker->randomNumber(6, true),
             'status'                =>  ($this->faker->randomElement(ReservationStatus::class))->value,
             'monthly_mileage'       =>  ($this->faker->randomElement(MonthlyMileage::class))->value,

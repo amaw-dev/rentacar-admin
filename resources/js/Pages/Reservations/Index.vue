@@ -28,6 +28,11 @@
                 />
                 <RentacarFilterDateTimeRange field="created_at" placeholder="Creación" />
                 <RentacarFilterDateRange field="pickup_date" placeholder="Recogida" />
+                <RentacarFilterEnumerable
+                  field="user"
+                  :options="referrersOptions"
+                  null-text="Referido"
+                />
               </template>
             </RentacarFilterToolbar>
           </template>
@@ -141,6 +146,13 @@ const franchisesOptions = computed(() =>
   usePage().props.franchises.map((franchise) => ({
     value: franchise.id,
     text: franchise.name,
+  }))
+);
+
+const referrersOptions = computed(() =>
+  usePage().props.referrers.map((referrer) => ({
+    value: referrer.value,
+    text: referrer.text,
   }))
 );
 

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Franchise;
+use App\Models\Reservation;
 use App\Enums\IdentificationType;
 use App\Enums\ReservationStatus;
 use App\Enums\MonthlyMileage;
@@ -103,6 +104,14 @@ class HandleInertiaRequests extends Middleware
             'categories'    =>  fn() => Category::all(),
             'branches'    =>  fn() => Branch::orderBy('name','asc')->get()->all(),
             'franchises'    =>  fn() => Franchise::all(),
+            'referrers'     =>  fn() => Reservation::whereNotNull('user')
+                ->where('user', '!=', '')
+                ->distinct()
+                ->pluck('user')
+                ->sort()
+                ->values()
+                ->map(fn($user) => ['text' => $user, 'value' => $user])
+                ->all(),
         ]);
     }
 }
