@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->fullText(['fullname','identification','phone','email','reserve_code'],'reservations_fulltext');
-        });
+        // FULLTEXT solo soportado en MySQL/MariaDB
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->fullText(['fullname','identification','phone','email','reserve_code'],'reservations_fulltext');
+            });
+        }
     }
 
     /**
@@ -21,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->dropFullText('reservations_fulltext');
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->dropFullText('reservations_fulltext');
+            });
+        }
     }
 };

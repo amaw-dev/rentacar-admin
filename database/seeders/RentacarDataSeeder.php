@@ -1543,164 +1543,164 @@ class RentacarDataSeeder extends Seeder
 
         // create branches
         if(true){
-            $AARME = Branch::create([
+            $AARME = Branch::firstOrCreate([
                 'city_id'   =>  $armenia->id,
                 'code'      =>  'AARME',
                 'name'      =>  'Armenia Aeropuerto'
             ]);
-            $AABAN = Branch::create([
+            $AABAN = Branch::firstOrCreate([
                 'city_id'   =>  $barranquilla->id,
                 'code'      =>  'AABAN',
                 'name'      =>  'Barranquilla Aeropuerto'
             ]);
-            $ACBAN = Branch::create([
+            $ACBAN = Branch::firstOrCreate([
                 'city_id'   =>  $barranquilla->id,
                 'code'      =>  'ACBAN',
                 'name'      =>  'Barranquilla Norte'
             ]);
-            $ACBSD = Branch::create([
+            $ACBSD = Branch::firstOrCreate([
                 'city_id'   =>  $soledad->id,
                 'code'      =>  'ACBSD',
                 'name'      =>  'Soledad'
             ]);
-            $AABOT = Branch::create([
+            $AABOT = Branch::firstOrCreate([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'AABOT',
                 'name'      =>  'Bogotá Aeropuerto'
             ]);
-            $ACBOT = Branch::create([
+            $ACBOT = Branch::firstOrCreate([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBOT',
                 'name'      =>  'Bogotá Av. Caracas con 72'
             ]);
-            $ACBEX = Branch::create([
+            $ACBEX = Branch::firstOrCreate([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBEX',
                 'name'      =>  'Bogotá Almacen Éxito del Country'
             ]);
-            $ACBNN = Branch::create([
+            $ACBNN = Branch::firstOrCreate([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBNN',
                 'name'      =>  'Bogotá C.Cial Nuestro Centro'
             ]);
-            $ACBOJ = Branch::create([
+            $ACBOJ = Branch::firstOrCreate([
                 'city_id'   =>  $bogota->id,
                 'code'      =>  'ACBOJ',
                 'name'      =>  'Bogotá Almacen Yumbo Calle 170'
             ]);
-            $AABCR = Branch::create([
+            $AABCR = Branch::firstOrCreate([
                 'city_id'   =>  $bucaramanga->id,
                 'code'      =>  'AABCR',
                 'name'      =>  'Bucaramanga Aeropuerto'
             ]);
-            $ACBCR = Branch::create([
+            $ACBCR = Branch::firstOrCreate([
                 'city_id'   =>  $floridablanca->id,
                 'code'      =>  'ACBCR',
                 'name'      =>  'Floridablanca'
             ]);
-            $AAKAL = Branch::create([
+            $AAKAL = Branch::firstOrCreate([
                 'city_id'   =>  $cali->id,
                 'code'      =>  'AAKAL',
                 'name'      =>  'Cali Aeropuerto'
             ]);
-            $ACKAL = Branch::create([
+            $ACKAL = Branch::firstOrCreate([
                 'city_id'   =>  $cali->id,
                 'code'      =>  'ACKAL',
                 'name'      =>  'Cali Sur Camino Real'
             ]);
-            $ACKJC = Branch::create([
+            $ACKJC = Branch::firstOrCreate([
                 'city_id'   =>  $cali->id,
                 'code'      =>  'ACKJC',
                 'name'      =>  'Cali Norte Chipichape'
             ]);
-            $ACKPA = Branch::create([
+            $ACKPA = Branch::firstOrCreate([
                 'city_id'   =>  $palmira->id,
                 'code'      =>  'ACKPA',
                 'name'      =>  'Palmira C.Cial Plaza Madero'
             ]);
-            $AACTG = Branch::create([
+            $AACTG = Branch::firstOrCreate([
                 'city_id'   =>  $cartagena->id,
                 'code'      =>  'AACTG',
                 'name'      =>  'Cartagena Aeropuerto'
             ]);
-            $AACUC = Branch::create([
+            $AACUC = Branch::firstOrCreate([
                 'city_id'   =>  $cucuta->id,
                 'code'      =>  'AACUC',
                 'name'      =>  'Cucuta Aeropuerto'
             ]);
-            $ACIBG = Branch::create([
+            $ACIBG = Branch::firstOrCreate([
                 'city_id'   =>  $ibague->id,
                 'code'      =>  'ACIBG',
                 'name'      =>  'Ibagué C.Cial Plazas del Bosque'
             ]);
-            $ACMNZ = Branch::create([
+            $ACMNZ = Branch::firstOrCreate([
                 'city_id'   =>  $manizales->id,
                 'code'      =>  'ACMNZ',
                 'name'      =>  'Manizales C.Cial Mallplaza'
             ]);
-            $ACMDL = Branch::create([
+            $ACMDL = Branch::firstOrCreate([
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'ACMDL',
                 'name'      =>  'Medellín Las Vegas el Poblado'
             ]);
 
-            $ACMCL = Branch::create([
+            $ACMCL = Branch::firstOrCreate([
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'ACMCL',
                 'name'      =>  'Medellín Centro Éxito Colombia'
             ]);
-            $ACMNN = Branch::create([
+            $ACMNN = Branch::firstOrCreate([
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'ACMNN',
                 'name'      =>  'Medellín Ciudad del Rio El Poblado'
             ]);
-            $AAMDL = Branch::create([
+            $AAMDL = Branch::firstOrCreate([
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'AAMDL',
                 'name'      =>  'Medellín Aeropuerto José María C.'
             ]);
-            $ACMJM = Branch::create([
+            $ACMJM = Branch::firstOrCreate([
                 'city_id'   =>  $medellin->id,
                 'code'      =>  'ACMJM',
                 'name'      =>  'Rionegro'
             ]);
-            $AAMTR = Branch::create([
+            $AAMTR = Branch::firstOrCreate([
                 'city_id'   =>  $monteria->id,
                 'code'      =>  'AAMTR',
                 'name'      =>  'Montería Aeropuerto'
             ]);
-            $ACMTR = Branch::create([
+            $ACMTR = Branch::firstOrCreate([
                 'city_id'   =>  $monteria->id,
                 'code'      =>  'ACMTR',
                 'name'      =>  'Montería C.Cial Buenavista'
             ]);
-            $AANVA = Branch::create([
+            $AANVA = Branch::firstOrCreate([
                 'city_id'   =>  $neiva->id,
                 'code'      =>  'AANVA',
                 'name'      =>  'Neiva Aeropuerto'
             ]);
-            $AAPEI = Branch::create([
+            $AAPEI = Branch::firstOrCreate([
                 'city_id'   =>  $pereira->id,
                 'code'      =>  'AAPEI',
                 'name'      =>  'Pereira Aeropuerto'
             ]);
-            $AASMR = Branch::create([
+            $AASMR = Branch::firstOrCreate([
                 'city_id'   =>  $santamarta->id,
                 'code'      =>  'AASMR',
                 'name'      =>  'Santa Marta Aeropuerto'
             ]);
-            $ACSMR = Branch::create([
+            $ACSMR = Branch::firstOrCreate([
                 'city_id'   =>  $santamarta->id,
                 'code'      =>  'ACSMR',
                 'name'      =>  'Santa Marta Barrio El prado'
             ]);
 
-            $AAVAL = Branch::create([
+            $AAVAL = Branch::firstOrCreate([
                 'city_id'   =>  $valledupar->id,
                 'code'      =>  'AAVAL',
                 'name'      =>  'Valledupar Aeropuerto'
             ]);
-            $ACVLL = Branch::create([
+            $ACVLL = Branch::firstOrCreate([
                 'city_id'   =>  $villavicencio->id,
                 'code'      =>  'ACVLL',
                 'name'      =>  'Villavicencio C.Cial Llano Centro'

@@ -23,10 +23,13 @@ return new class extends Migration
         ];
 
         foreach($data as $category => $one_day_price){
-            $monthPrice = (Category::where('identification',$category)->first())->monthPrices()->first();
-            if($monthPrice){
-                $monthPrice->one_day_price = $one_day_price;
-                $monthPrice->save();
+            $categoryModel = Category::where('identification',$category)->first();
+            if($categoryModel){
+                $monthPrice = $categoryModel->monthPrices()->first();
+                if($monthPrice){
+                    $monthPrice->one_day_price = $one_day_price;
+                    $monthPrice->save();
+                }
             }
         }
     }
