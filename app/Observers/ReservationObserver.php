@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Enums\ReservationStatus;
 use App\Jobs\SendClientReservationNotificationJob;
+use App\Jobs\SyncReservationToGhlJob;
 use App\Models\Reservation;
 
 use App\Events\SendReservationNotificationEvent;
@@ -20,7 +21,7 @@ class ReservationObserver
      */
     public function created(Reservation $reservation): void
     {
-        //
+        $this->syncToGhl($reservation);
     }
 
     /**
@@ -35,6 +36,20 @@ class ReservationObserver
                 && $reservation->reserve_code
             )
                 SendReservationNotificationEvent::dispatch($reservation);
+        }
+
+        $this->syncToGhl($reservation);
+    }
+
+    /**
+     * Sync reservation to GoHighLevel.
+     */
+    protected function syncToGhl(Reservation $reservation): void
+    {
+        // Only sync if GHL config exists for the franchise
+        $franchise = $reservation->franchiseObject;
+        if ($franchise && config("ghl.franchises.{$franchise->name}.api_key")) {
+            SyncReservationToGhlJob::dispatch($reservation);
         }
     }
 

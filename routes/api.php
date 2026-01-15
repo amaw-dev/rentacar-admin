@@ -7,6 +7,7 @@ use App\Http\Controllers\API\ReservasDataProviderController;
 use App\Http\Controllers\API\ReservationsDataProviderController;
 use App\Http\Controllers\API\ReservationAPIController;
 use App\Http\Controllers\API\VehicleAvailableRateController;
+use App\Http\Controllers\Webhooks\GhlWebhookController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,3 +22,8 @@ Route::post('/reservations', ReservationsDataProviderController::class)->name('d
 Route::post('/disponibilidad', VehicleAvailableRateController::class)->name('dataprovider.disponibilidad');
 
 Route::post('/reserve', ReservationAPIController::class)->name('reserve.store');
+
+// GoHighLevel Webhooks (per franchise)
+Route::post('/webhooks/ghl/{franchise}', [GhlWebhookController::class, 'handle'])
+    ->where('franchise', 'alquilatucarro|alquilame|alquicarros')
+    ->name('webhooks.ghl');

@@ -5,4 +5,5 @@ return [
     App\Providers\FortifyServiceProvider::class,
     App\Providers\JetstreamServiceProvider::class,
     App\Providers\WatiServiceProvider::class,
+    App\Providers\GhlServiceProvider::class,
 ];
