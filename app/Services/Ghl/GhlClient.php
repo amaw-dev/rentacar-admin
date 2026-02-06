@@ -130,6 +130,48 @@ class GhlClient
     }
 
     /**
+     * Search opportunities by contact ID and optionally by stage.
+     *
+     * Used to find existing opportunities (e.g., "Cotizado") before creating new ones.
+     */
+    public function searchOpportunitiesByContact(string $contactId, ?string $stageId = null): array
+    {
+        $this->ensureFranchiseSet();
+
+        try {
+            $params = [
+                'contact_id' => $contactId,
+                'pipeline_id' => $this->config['pipeline_id'],
+            ];
+
+            if ($stageId) {
+                $params['pipeline_stage_id'] = $stageId;
+            }
+
+            $response = $this->client()->get('/opportunities/search', $params);
+
+            if ($response->successful()) {
+                return $response->json('opportunities', []);
+            }
+
+            Log::warning('GHL searchOpportunitiesByContact failed', [
+                'franchise' => $this->franchiseKey,
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
+
+            return [];
+        } catch (\Exception $e) {
+            Log::error('GHL searchOpportunitiesByContact exception', [
+                'franchise' => $this->franchiseKey,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+    }
+
+    /**
      * Create an opportunity.
      */
     public function createOpportunity(string $contactId, array $data): ?array
@@ -231,6 +273,97 @@ class GhlClient
         if (!$this->franchiseKey || !$this->config) {
             throw new \RuntimeException('Franchise must be set before making API calls. Use forFranchise() first.');
         }
+    }
+
+    /**
+     * Send a WhatsApp message to a contact.
+     *
+     * @param string $contactId The GHL contact ID
+     * @param string $message The message content
+     * @return array|null The response data or null on failure
+     */
+    public function sendWhatsAppMessage(string $contactId, string $message): ?array
+    {
+        $this->ensureFranchiseSet();
+
+        try {
+            $response = $this->client()->post('/conversations/messages', [
+                'type' => 'WhatsApp',
+                'contactId' => $contactId,
+                'message' => $message,
+            ]);
+
+            if ($response->successful()) {
+                Log::info('GHL sendWhatsAppMessage success', [
+                    'franchise' => $this->franchiseKey,
+                    'contact_id' => $contactId,
+                    'message_id' => $response->json('messageId'),
+                ]);
+
+                return $response->json();
+            }
+
+            Log::error('GHL sendWhatsAppMessage failed', [
+                'franchise' => $this->franchiseKey,
+                'contact_id' => $contactId,
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('GHL sendWhatsAppMessage exception', [
+                'franchise' => $this->franchiseKey,
+                'contact_id' => $contactId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Send a WhatsApp message to a phone number (creates/finds contact first).
+     *
+     * @param string $phone The phone number (with country code)
+     * @param string $message The message content
+     * @return array|null The response data or null on failure
+     */
+    public function sendWhatsAppToPhone(string $phone, string $message): ?array
+    {
+        $this->ensureFranchiseSet();
+
+        // First, find or create the contact by phone
+        $contact = $this->findContactByPhone($phone);
+
+        if (!$contact) {
+            // Create a minimal contact with just the phone
+            $contact = $this->upsertContact([
+                'phone' => $phone,
+                'locationId' => $this->config['location_id'],
+            ]);
+        }
+
+        if (!$contact || !isset($contact['id'])) {
+            Log::error('GHL sendWhatsAppToPhone: Could not find or create contact', [
+                'franchise' => $this->franchiseKey,
+                'phone' => $phone,
+            ]);
+
+            return null;
+        }
+
+        return $this->sendWhatsAppMessage($contact['id'], $message);
+    }
+
+    /**
+     * Get the location ID for the current franchise.
+     */
+    public function getLocationId(): ?string
+    {
+        $this->ensureFranchiseSet();
+
+        return $this->config['location_id'] ?? null;
     }
 
     /**

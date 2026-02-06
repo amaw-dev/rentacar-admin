@@ -12,7 +12,7 @@ class GhlContactMapper
     public static function toGhlContact(Reservation $reservation): array
     {
         $names = self::splitFullName($reservation->fullname);
-        $franchiseKey = $reservation->franchiseObject->name;
+        $franchiseKey = GhlClient::getFranchiseKey($reservation->franchiseObject);
 
         $data = [
             'firstName' => $names['firstName'],

@@ -6,6 +6,7 @@ use App\Enums\ReservationStatus;
 use App\Jobs\SendClientReservationNotificationJob;
 use App\Jobs\SyncReservationToGhlJob;
 use App\Models\Reservation;
+use App\Services\Ghl\GhlClient;
 
 use App\Events\SendReservationNotificationEvent;
 
@@ -48,8 +49,11 @@ class ReservationObserver
     {
         // Only sync if GHL config exists for the franchise
         $franchise = $reservation->franchiseObject;
-        if ($franchise && config("ghl.franchises.{$franchise->name}.api_key")) {
-            SyncReservationToGhlJob::dispatch($reservation);
+        if ($franchise) {
+            $franchiseKey = GhlClient::getFranchiseKey($franchise);
+            if (config("ghl.franchises.{$franchiseKey}.api_key")) {
+                SyncReservationToGhlJob::dispatch($reservation);
+            }
         }
     }
 

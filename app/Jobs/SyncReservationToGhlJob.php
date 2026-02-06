@@ -44,7 +44,7 @@ class SyncReservationToGhlJob implements ShouldQueue
             return;
         }
 
-        $franchiseKey = $franchise->name;
+        $franchiseKey = GhlClient::getFranchiseKey($franchise);
 
         // Check if GHL is configured for this franchise
         if (!config("ghl.franchises.{$franchiseKey}.api_key")) {
@@ -76,7 +76,7 @@ class SyncReservationToGhlJob implements ShouldQueue
 
             // Step 2: Create or Update Opportunity
             if ($this->reservation->ghl_opportunity_id) {
-                // Update existing opportunity
+                // Update existing opportunity (already linked)
                 $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client);
                 $opportunity = $client->updateOpportunity($this->reservation->ghl_opportunity_id, $opportunityData);
 
@@ -88,18 +88,45 @@ class SyncReservationToGhlJob implements ShouldQueue
                     ]);
                 }
             } else {
-                // Create new opportunity
-                $opportunityData = GhlOpportunityMapper::toGhlOpportunity($this->reservation, $client);
-                $opportunity = $client->createOpportunity($contactId, $opportunityData);
+                // Search for existing "Cotizado" opportunity for this contact
+                // This maintains traceability when staff quotes via WhatsApp and client completes via web
+                $cotizadoStageId = $client->getStageId('cotizado');
+                $existingOpportunity = null;
 
-                if ($opportunity) {
-                    $this->reservation->ghl_opportunity_id = $opportunity['id'];
-                } else {
-                    Log::error('SyncReservationToGhlJob: Failed to create opportunity', [
+                if ($cotizadoStageId) {
+                    $existingOpportunities = $client->searchOpportunitiesByContact($contactId, $cotizadoStageId);
+
+                    if (!empty($existingOpportunities)) {
+                        // Use the most recent one (first in array)
+                        $existingOpportunity = $existingOpportunities[0];
+                    }
+                }
+
+                if ($existingOpportunity) {
+                    // Link to existing "Cotizado" opportunity and update it
+                    $this->reservation->ghl_opportunity_id = $existingOpportunity['id'];
+                    $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client);
+                    $opportunity = $client->updateOpportunity($existingOpportunity['id'], $opportunityData);
+
+                    Log::info('SyncReservationToGhlJob: Linked to existing Cotizado opportunity', [
                         'reservation_id' => $this->reservation->id,
-                        'contact_id' => $contactId,
+                        'opportunity_id' => $existingOpportunity['id'],
                         'franchise' => $franchiseKey,
                     ]);
+                } else {
+                    // No existing Cotizado opportunity found, create new
+                    $opportunityData = GhlOpportunityMapper::toGhlOpportunity($this->reservation, $client);
+                    $opportunity = $client->createOpportunity($contactId, $opportunityData);
+
+                    if ($opportunity) {
+                        $this->reservation->ghl_opportunity_id = $opportunity['id'];
+                    } else {
+                        Log::error('SyncReservationToGhlJob: Failed to create opportunity', [
+                            'reservation_id' => $this->reservation->id,
+                            'contact_id' => $contactId,
+                            'franchise' => $franchiseKey,
+                        ]);
+                    }
                 }
             }
 

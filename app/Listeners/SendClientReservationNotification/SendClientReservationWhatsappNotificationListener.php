@@ -2,13 +2,14 @@
 
 namespace App\Listeners\SendClientReservationNotification;
 
-use Illuminate\Support\Facades\Log;
-use App\Events\SendReservationNotificationEvent;
-use App\Events\NewMonthlyReservationEvent;
 use App\Enums\ReservationStatus;
-use App\Models\Reservation;
+use App\Events\NewMonthlyReservationEvent;
+use App\Events\SendReservationNotificationEvent;
 use App\Facades\Wati;
-use \Exception;
+use App\Jobs\SendGhlWhatsAppNotificationJob;
+use App\Models\Reservation;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class SendClientReservationWhatsappNotificationListener extends SendClientReservationNotificationListener
 {
@@ -293,6 +294,25 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
      */
     public function handle(SendReservationNotificationEvent|NewMonthlyReservationEvent $event): void
     {
+        $reservation = $event->reservation;
+        $provider = config('features.notifications.whatsapp_provider', 'wati');
+
+        // Send via WATI if provider is 'wati' or 'both'
+        if (in_array($provider, ['wati', 'both'])) {
+            $this->sendViaWati($reservation);
+        }
+
+        // Send via GHL if provider is 'ghl' or 'both'
+        if (in_array($provider, ['ghl', 'both'])) {
+            $this->sendViaGhl($reservation);
+        }
+    }
+
+    /**
+     * Send notification via WATI (legacy provider).
+     */
+    protected function sendViaWati(Reservation $reservation): void
+    {
         $this->today = now()->format('Y-m-d');
 
         $this->templateMessages = [
@@ -302,20 +322,29 @@ class SendClientReservationWhatsappNotificationListener extends SendClientReserv
             ReservationStatus::Mensualidad->value => 'reserva_mensual',
         ];
 
-        $reservation = $event->reservation;
-        $status = $reservation->status instanceof ReservationStatus ? $reservation->status->value : (string) $reservation->status;
+        $status = $reservation->status instanceof ReservationStatus
+            ? $reservation->status->value
+            : (string) $reservation->status;
 
-        // Obtener el nombre del método desde el arreglo usando el valor del enum
         $methodName = $this->selectReservationNotificationMethodByStatus($status);
 
-        // Verificar si el método existe y es callable
         if ($methodName && method_exists($this, $methodName)) {
-            // Ejecutar el método dinámicamente
             $this->$methodName($reservation);
         } else {
-            // Manejar el caso en que no se encuentre el método
             throw new Exception("Método de notificación no encontrado para el estado: {$status}");
         }
+    }
 
+    /**
+     * Send notification via GHL (new provider).
+     */
+    protected function sendViaGhl(Reservation $reservation): void
+    {
+        SendGhlWhatsAppNotificationJob::dispatch($reservation);
+
+        Log::info('SendClientReservationWhatsappNotificationListener: GHL job dispatched', [
+            'reservation_id' => $reservation->id,
+            'status' => $reservation->status->value ?? $reservation->status,
+        ]);
     }
 }

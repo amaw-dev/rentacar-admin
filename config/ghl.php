@@ -31,6 +31,7 @@ return [
             'pipeline_id' => env('ALQUILAME_GHL_PIPELINE_ID'),
             'webhook_secret' => env('ALQUILAME_GHL_WEBHOOK_SECRET'),
             'stages' => [
+                'cotizado' => env('ALQUILAME_GHL_STAGE_COTIZADO'),
                 'pendiente' => env('ALQUILAME_GHL_STAGE_PENDIENTE'),
                 'reservado' => env('ALQUILAME_GHL_STAGE_RESERVADO'),
                 'sin_disponibilidad' => env('ALQUILAME_GHL_STAGE_SIN_DISPONIBILIDAD'),
