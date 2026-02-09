@@ -110,6 +110,7 @@ class GhlOpportunityMapperTest extends TestCase
         $this->assertEquals('open', $data['status']);
         $this->assertEquals(500000.0, $data['monetaryValue']);
         $this->assertStringContainsString('TEST123', $data['name']);
+        $this->assertStringContainsString('SUV Compacta', $data['name']);
     }
 
     #[Group("ghl")]
