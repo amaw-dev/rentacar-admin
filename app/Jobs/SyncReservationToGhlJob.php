@@ -76,8 +76,11 @@ class SyncReservationToGhlJob implements ShouldQueue
 
             // Step 2: Create or Update Opportunity
             if ($this->reservation->ghl_opportunity_id) {
+                // Fetch existing opportunity to preserve custom fields (e.g., sede_origen)
+                $existingOpp = $client->getOpportunity($this->reservation->ghl_opportunity_id);
+
                 // Update existing opportunity (already linked)
-                $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client);
+                $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client, $existingOpp);
                 $opportunity = $client->updateOpportunity($this->reservation->ghl_opportunity_id, $opportunityData);
 
                 if (!$opportunity) {
@@ -103,9 +106,12 @@ class SyncReservationToGhlJob implements ShouldQueue
                 }
 
                 if ($existingOpportunity) {
+                    // Fetch full opportunity to get all customFields (search may not include them)
+                    $fullExistingOpp = $client->getOpportunity($existingOpportunity['id']);
+
                     // Link to existing "Cotizado" opportunity and update it
                     $this->reservation->ghl_opportunity_id = $existingOpportunity['id'];
-                    $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client);
+                    $opportunityData = GhlOpportunityMapper::toGhlOpportunityUpdate($this->reservation, $client, $fullExistingOpp);
                     $opportunity = $client->updateOpportunity($existingOpportunity['id'], $opportunityData);
 
                     Log::info('SyncReservationToGhlJob: Linked to existing Cotizado opportunity', [

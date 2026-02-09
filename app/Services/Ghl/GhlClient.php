@@ -101,6 +101,39 @@ class GhlClient
     }
 
     /**
+     * Get a contact by ID.
+     */
+    public function getContact(string $contactId): ?array
+    {
+        $this->ensureFranchiseSet();
+
+        try {
+            $response = $this->client()->get("/contacts/{$contactId}");
+
+            if ($response->successful()) {
+                return $response->json('contact');
+            }
+
+            Log::warning('GHL getContact failed', [
+                'franchise' => $this->franchiseKey,
+                'contact_id' => $contactId,
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('GHL getContact exception', [
+                'franchise' => $this->franchiseKey,
+                'contact_id' => $contactId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
      * Find contact by phone.
      */
     public function findContactByPhone(string $phone): ?array
@@ -198,6 +231,39 @@ class GhlClient
         } catch (\Exception $e) {
             Log::error('GHL createOpportunity exception', [
                 'franchise' => $this->franchiseKey,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Get an opportunity by ID.
+     */
+    public function getOpportunity(string $opportunityId): ?array
+    {
+        $this->ensureFranchiseSet();
+
+        try {
+            $response = $this->client()->get("/opportunities/{$opportunityId}");
+
+            if ($response->successful()) {
+                return $response->json('opportunity');
+            }
+
+            Log::warning('GHL getOpportunity failed', [
+                'franchise' => $this->franchiseKey,
+                'opportunity_id' => $opportunityId,
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('GHL getOpportunity exception', [
+                'franchise' => $this->franchiseKey,
+                'opportunity_id' => $opportunityId,
                 'error' => $e->getMessage(),
             ]);
 

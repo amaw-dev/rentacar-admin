@@ -8,6 +8,13 @@ use App\Models\Reservation;
 class GhlOpportunityMapper
 {
     /**
+     * Custom fields that should be preserved when updating (not overwritten by reservation data).
+     */
+    protected static array $preservedCustomFields = [
+        'sede_origen',
+    ];
+
+    /**
      * Map ReservationStatus to GHL stage config key.
      */
     protected static array $statusToStageKey = [
@@ -39,15 +46,26 @@ class GhlOpportunityMapper
 
     /**
      * Map a Reservation to GHL Opportunity data for update.
+     *
+     * @param Reservation $reservation The reservation to map
+     * @param GhlClient $client The GHL client
+     * @param array|null $existingOpportunity The existing opportunity data (to preserve certain custom fields)
      */
-    public static function toGhlOpportunityUpdate(Reservation $reservation, GhlClient $client): array
+    public static function toGhlOpportunityUpdate(Reservation $reservation, GhlClient $client, ?array $existingOpportunity = null): array
     {
         $stageId = $client->getStageId(self::getStageKey($reservation->status));
+
+        $newCustomFields = self::buildCustomFields($reservation);
+
+        // Merge with existing custom fields, preserving specific fields like "sede_origen"
+        if ($existingOpportunity) {
+            $newCustomFields = self::mergeCustomFields($existingOpportunity['customFields'] ?? [], $newCustomFields);
+        }
 
         $data = [
             'name' => self::buildOpportunityName($reservation),
             'monetaryValue' => (float) $reservation->total_price,
-            'customFields' => self::buildCustomFields($reservation),
+            'customFields' => $newCustomFields,
         ];
 
         // Only include stageId if it's a valid stage
@@ -56,6 +74,39 @@ class GhlOpportunityMapper
         }
 
         return $data;
+    }
+
+    /**
+     * Merge custom fields, preserving specific fields from existing data.
+     *
+     * @param array $existingFields Existing custom fields from GHL
+     * @param array $newFields New custom fields from reservation
+     * @return array Merged custom fields
+     */
+    protected static function mergeCustomFields(array $existingFields, array $newFields): array
+    {
+        // Extract preserved fields from existing data
+        $preservedValues = [];
+        foreach ($existingFields as $field) {
+            $key = $field['key'] ?? $field['id'] ?? null;
+            if ($key && in_array($key, self::$preservedCustomFields)) {
+                $preservedValues[$key] = $field['value'] ?? $field['field_value'] ?? '';
+            }
+        }
+
+        // Add preserved fields to new fields (if they have values and aren't already in new fields)
+        $newFieldKeys = array_map(fn($f) => $f['key'] ?? '', $newFields);
+
+        foreach ($preservedValues as $key => $value) {
+            if (!empty($value) && !in_array($key, $newFieldKeys)) {
+                $newFields[] = [
+                    'key' => $key,
+                    'field_value' => $value,
+                ];
+            }
+        }
+
+        return $newFields;
     }
 
     /**
