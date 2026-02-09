@@ -35,7 +35,7 @@ class GhlOpportunityMapper
 
         $data = [
             'name' => self::buildOpportunityName($reservation),
-            'stageId' => $stageId,
+            'pipelineStageId' => $stageId,
             'status' => 'open',
             'monetaryValue' => (float) $reservation->total_price,
             'customFields' => self::buildCustomFields($reservation),
@@ -70,7 +70,7 @@ class GhlOpportunityMapper
 
         // Only include stageId if it's a valid stage
         if ($stageId) {
-            $data['stageId'] = $stageId;
+            $data['pipelineStageId'] = $stageId;
         }
 
         return $data;
