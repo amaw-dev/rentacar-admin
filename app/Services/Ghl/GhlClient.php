@@ -173,6 +173,7 @@ class GhlClient
 
         try {
             $params = [
+                'location_id' => $this->config['location_id'],
                 'contact_id' => $contactId,
                 'pipeline_id' => $this->config['pipeline_id'],
             ];
@@ -213,6 +214,7 @@ class GhlClient
 
         $data['contactId'] = $contactId;
         $data['pipelineId'] = $this->config['pipeline_id'];
+        $data['locationId'] = $this->config['location_id'];
 
         try {
             $response = $this->client()->post('/opportunities/', $data);
