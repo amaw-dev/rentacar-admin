@@ -19,6 +19,7 @@ class CategoryDataProviderResource extends JsonResource
         $this->category = $category;
         $this->totalCoverageSet = [
             'C' => (int) config('localiza.totalCoverageCategoryC'),
+            'CX' => (int) config('localiza.totalCoverageCategoryCX'),
             'F' => (int) config('localiza.totalCoverageCategoryF'),
             'FX' => (int) config('localiza.totalCoverageCategoryFX'),
             'FL' => (int) config('localiza.totalCoverageCategoryFL'),

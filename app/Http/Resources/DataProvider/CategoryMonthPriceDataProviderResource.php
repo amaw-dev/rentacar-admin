@@ -15,6 +15,7 @@ class CategoryMonthPriceDataProviderResource extends JsonResource
 
         $this->totalCoverageMonthSet = [
             'C' => (int) config('localiza.totalCoverageMonthCategoryC'),
+            'CX' => (int) config('localiza.totalCoverageMonthCategoryCX'),
             'F' => (int) config('localiza.totalCoverageMonthCategoryF'),
             'FX' => (int) config('localiza.totalCoverageMonthCategoryFX'),
             'FL' => (int) config('localiza.totalCoverageMonthCategoryFL'),

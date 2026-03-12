@@ -14,6 +14,7 @@ return [
     'totalCoveragePriceHighGamma' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_HIGH_GAMMA',91016),
 
     'totalCoverageCategoryC' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_C',49859),
+    'totalCoverageCategoryCX' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_CX',67000),
     'totalCoverageCategoryF' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_F',62002),
     'totalCoverageCategoryFX' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_FX',62002),
     'totalCoverageCategoryFL' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_FL',62002),
@@ -27,6 +28,7 @@ return [
     'totalCoverageCategoryVP' => env('LOCALIZA_TOTAL_COVERAGE_PRICE_CATEGORY_VP',102011),
 
     'totalCoverageMonthCategoryC' => env('LOCALIZA_TOTAL_COVERAGE_MONTH_PRICE_CATEGORY_C',49859),
+    'totalCoverageMonthCategoryCX' => env('LOCALIZA_TOTAL_COVERAGE_MONTH_PRICE_CATEGORY_CX',67000),
     'totalCoverageMonthCategoryF' => env('LOCALIZA_TOTAL_COVERAGE_MONTH_PRICE_CATEGORY_F',62002),
     'totalCoverageMonthCategoryFX' => env('LOCALIZA_TOTAL_COVERAGE_MONTH_PRICE_CATEGORY_FX',62002),
     'totalCoverageMonthCategoryFL' => env('LOCALIZA_TOTAL_COVERAGE_MONTH_PRICE_CATEGORY_FL',62002),
